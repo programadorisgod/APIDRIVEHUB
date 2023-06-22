@@ -1,0 +1,28 @@
+{
+  "name": "drivehub",
+  "version": "1.0.0",
+  "description": "Drive para uso personal",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "author": "Camilo Developer",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.3.1",
+    "nodemon": "^2.0.22",
+    "standard": "^17.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.43.0"
+  },
+  "eslintConfig": {
+    "extends": "./node_modules/standard/eslintrc.json"
+  }
+}
