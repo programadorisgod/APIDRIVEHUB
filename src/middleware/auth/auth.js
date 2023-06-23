@@ -1,4 +1,4 @@
-import { validateToken } from '../helpers/handleJwt.js'
+import { validateToken } from '../../helpers/handleJwt.js'
 
 export const checkAuth = async (req, res, next) => {
   try {

@@ -21,11 +21,9 @@ const UserSchema = new Schema({
   },
   directories: [{
     nameDirectorio: { type: String },
-    file: [{ type: String }]
-  }],
-  date: {
-    type: Date
-  }
+    file: [{ type: String }],
+    date: { type: Date }
+  }]
 }, {
   timestamps: true,
   versionKey: false
