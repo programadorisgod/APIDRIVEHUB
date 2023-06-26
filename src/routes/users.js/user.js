@@ -12,13 +12,13 @@ const routerUser = Router()
 
 const path = '/api/users'
 
-routerUser.get(`${path}/:userName`, getUser)
+routerUser.get(`${path}/:userName`, checkAuth, getUser)
 routerUser.post(`${path}/create`, ValidateData, createUser)
-routerUser.put(`${path}/update/:id`, ValidateData, uploadAvatar, UpdateUser)
-routerUser.put(`${path}/createDirectory/:userName`, createDirectorie, createFile)
-routerUser.put(`${path}/addFields/:userName/:nameDirectory`, uploadFile, updateDirectories)
-routerUser.delete(`${path}/deleteDirectory/:userName/:nameDirectory`, deleteDirectory, deleteFile)
-routerUser.delete(`${path}/deleteFiles/:userName/:nameDirectory`, deleteFileUser, deleteFiles)
+routerUser.put(`${path}/update/:id`, checkAuth, ValidateData, uploadAvatar, UpdateUser)
+routerUser.put(`${path}/createDirectory/:userName`, checkAuth, createDirectorie, createFile)
+routerUser.put(`${path}/addFields/:userName/:nameDirectory`, checkAuth, uploadFile, updateDirectories)
+routerUser.delete(`${path}/deleteDirectory/:userName/:nameDirectory`, checkAuth, deleteDirectory, deleteFile)
+routerUser.delete(`${path}/deleteFiles/:userName/:nameDirectory`, checkAuth, deleteFileUser, deleteFiles)
 routerUser.delete(`${path}/delete/:userName`, checkAuth, deleteUser)
 
 export default routerUser

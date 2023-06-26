@@ -1,6 +1,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import verifyFileExist from '../../helpers/verifyFile.js'
+import { httpError } from '../../helpers/handleError.js'
 
 const __dirname = fileURLToPath(import.meta.url)
 
@@ -28,6 +29,6 @@ export default function getAvatars (req, res) {
     }
     res.sendFile(route)
   } catch (error) {
-    res.status(500).json({ error: 'Error getting file' })
+    httpError(error, res)
   }
 }

@@ -1,4 +1,5 @@
 import { comparePassword } from '../../helpers/handleBcrypt.js'
+import { httpError } from '../../helpers/handleError.js'
 import { generateToken } from '../../helpers/handleJwt.js'
 import UserModel from '../../models /user.js'
 
@@ -34,6 +35,6 @@ export const Login = async (req, res) => {
     const token = generateToken(userEmailCorrect)
     res.status(200).json({ userEmailCorrect, token })
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }

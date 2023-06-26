@@ -1,4 +1,5 @@
 import { encryptPassword } from '../../helpers/handleBcrypt.js'
+import { httpError } from '../../helpers/handleError.js'
 
 import UserModel from '../../models /user.js'
 /**
@@ -26,7 +27,7 @@ export const getUser = async (req, res) => {
 
     res.status(200).json({ user })
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }
 
@@ -62,7 +63,7 @@ export const createUser = async (req, res) => {
     }
     res.status(201).json({ userCreated })
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }
 /**
@@ -110,7 +111,7 @@ export const UpdateUser = async (req, res) => {
 
     res.status(200).json({ userUpdate })
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }
 /**
@@ -154,7 +155,7 @@ export const createDirectorie = async (req, res, next) => {
     res.status(200).json(userCreatedDirectory)
     return next()
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }
 /**
@@ -198,7 +199,7 @@ export const updateDirectories = async (req, res) => {
     // si se encontro el usuario
     res.status(200).json({ userFileUpdate })
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }
 /**
@@ -233,7 +234,7 @@ export const deleteDirectory = async (req, res, next) => {
     res.status(200).json({ message: 'Directory deleted correctly ' })
     return next()
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }
 
@@ -283,7 +284,7 @@ export const deleteFileUser = async (req, res, next) => {
 
     return next()
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }
 
@@ -305,6 +306,6 @@ export const deleteUser = async (req, res) => {
     }
     res.status(200).json('user deleted succefull')
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }

@@ -1,6 +1,7 @@
 import { unlink } from 'node:fs/promises'
 import { fileURLToPath } from 'url'
 import path from 'path'
+import { httpError } from '../../helpers/handleError.js'
 const __dirname = fileURLToPath(import.meta.url)
 
 export const deleteFiles = async (req, res) => {
@@ -13,6 +14,6 @@ export const deleteFiles = async (req, res) => {
     }
     res.status(200).json({ message: 'files deleted correctly' })
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }

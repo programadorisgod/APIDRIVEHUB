@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { httpError } from '../../helpers/handleError.js'
 /** Usamos el fileURLToPath para convertir la url en una ruta de archivo */
 const __dirname = fileURLToPath(import.meta.url)
 
@@ -47,6 +48,6 @@ export const createFile = async (req, res, next) => {
     }
     return next()
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    httpError(error, res)
   }
 }
