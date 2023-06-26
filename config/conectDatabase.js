@@ -8,7 +8,7 @@ const connectDB = async () => {
       // useUnifiedTopology habilitada, Mongoose utiliza la nueva topología de MongoDB y asegura que todas las opciones de configuración se establezcan correctamente.
       useUnifiedTopology: true
     })
-    console.log('conect DB mongoose')
+    console.log('[database] conect DB mongoose '.magenta.bold)
   } catch (error) {
     console.log('error:', error)
   }

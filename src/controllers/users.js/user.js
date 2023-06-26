@@ -1,7 +1,12 @@
 import { encryptPassword } from '../../helpers/handleBcrypt.js'
 
 import UserModel from '../../models /user.js'
-
+/**
+ * This function get a user by id specified
+ * @param {id} req
+ * @param {user} res
+ * @returns
+ */
 export const getUser = async (req, res) => {
   const { userName } = req.params
 
@@ -25,6 +30,18 @@ export const getUser = async (req, res) => {
   }
 }
 
+/**
+ * This function creates a new user with a default avatar, encrypted password, and specified username,
+ * email, and creation date.
+ * @param {body} req - req stands for request and it is an object that contains information about the HTTP
+ * request that was made, such as the request headers, request parameters, request body, etc.
+ * @param {user} res - `res` is the response object that is used to send a response back to the client making
+ * the request. It contains methods such as `status` to set the HTTP status code of the response, and
+ * `json` to send a JSON response back to the client.
+ * @returns If the user is successfully created, a JSON object with the created user's information is
+ * returned with a status code of 201. If there is an error creating the user, a JSON object with an
+ * error message is returned with a status code of 500.
+ */
 export const createUser = async (req, res) => {
   const { userName, email, password } = req.body
   try {
@@ -48,13 +65,27 @@ export const createUser = async (req, res) => {
     res.status(500).json({ error: 'an internal error ocurred in the server ' })
   }
 }
+/**
+ * This function updates a user's information, including their username, password, and avatar image.
+ * @param {body, id}req - The request object represents the HTTP request that was sent by the client to the
+ * server. It contains information about the request, such as the HTTP method, headers, body, and
+ * parameters.
+ * @param {user} res - The "res" parameter is the response object that will be sent back to the client with
+ * the updated user information or an error message if something went wrong during the update process.
+ * @returns a JSON response with the updated user object if the update was successful, or a JSON
+ * response with an error message if there was an error during the update process.
+ */
+
 export const UpdateUser = async (req, res) => {
   const { userName, password } = req.body
   const { id } = req.params
 
   try {
     const user = await UserModel.findById(id)
-
+    if (!user) {
+      res.status(404).json({ error: 'User not found' })
+      return
+    }
     let passwordHas = user.password
 
     let avatar = user.avatar
@@ -62,8 +93,8 @@ export const UpdateUser = async (req, res) => {
      del archivo
      */
 
-    if (req.files && req.files.filename) {
-      avatar = req.files.filename
+    if (req.file && req.file.filename) {
+      avatar = req.file.filename
     }
     /** si viene contraseñas la actualizamos y encryptamos */
     if (password) {
@@ -79,14 +110,25 @@ export const UpdateUser = async (req, res) => {
 
     res.status(200).json({ userUpdate })
   } catch (error) {
-    console.log(error)
-
     res.status(500).json({ error: 'an internal error ocurred in the server ' })
   }
 }
+/**
+ * This function creates a directory for a user and checks if the directory already exists.
+ * @param req - req stands for request and it is an object that contains information about the HTTP
+ * request that was made, such as the request headers, request parameters, request body, etc.
+ * @param res - `res` is the response object that is used to send the HTTP response back to the client.
+ * It contains methods like `status()` to set the HTTP status code, `json()` to send a JSON response,
+ * and `send()` to send a plain text response.
+ * @param next - `next` is a function that is called to pass control to the next middleware function.
+ * It is typically used in Express.js to chain multiple middleware functions together.
+ * @returns a JSON response with the created directory object if the directory was successfully
+ * created, or an error message if there was an issue with the request or server. The `next()` function
+ * is also being called, but it is not necessary since the function already returns a response.
+ */
 export const createDirectorie = async (req, res, next) => {
   const { userName } = req.params
-  const { nameDirectorio } = req.body
+  const { nameDirectory } = req.body
 
   try {
     const user = await UserModel.findOne({ userName })
@@ -97,7 +139,7 @@ export const createDirectorie = async (req, res, next) => {
     }
 
     // verificar Si el directorio existe
-    const verifyDirectory = user.directories.find(dir => dir.nameDirectorio === nameDirectorio)
+    const verifyDirectory = user.directories.find(dir => dir.nameDirectorio === nameDirectory)
     if (verifyDirectory) {
       res.status(409).json('No se pudo crear el directorio, porque ya existe uno con ese nombre')
       return
@@ -105,7 +147,7 @@ export const createDirectorie = async (req, res, next) => {
 
     /** usamos el metodo addToset para agregar al arreglo y aplanarlo */
     const userCreatedDirectory = await UserModel.findOneAndUpdate(user._id,
-      { $addToSet: { directories: { nameDirectorio } } },
+      { $addToSet: { directories: { nameDirectory } } },
       { new: true }
     )
 
@@ -115,9 +157,21 @@ export const createDirectorie = async (req, res, next) => {
     res.status(500).json({ error: 'an internal error ocurred in the server ' })
   }
 }
+/**
+ * This function updates a user's directories by adding new files to a specific directory.
+ * @param {Object} req - The request object
+ * @param {Object} req.params - The request parameters
+ * @param {String} req.params.userName - The username of the user.
+ * @param {String} req.params.nameDirectory - The name of the directory.
+ * @param {String}res - The `res` parameter is the response object that will be sent back to the client with
+ * the updated directories or an error message. It contains methods to set the HTTP status code,
+ * headers, and body of the response.
+ * @returns This function returns a JSON response with the updated user object if the update was
+ * successful, or an error message if there was an error.
+ */
 export const updateDirectories = async (req, res) => {
-  const { userName } = req.params
-  const { nameDirectorio } = req.params
+  const { userName, nameDirectory } = req.params
+
   try {
     const file = []
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
@@ -126,15 +180,17 @@ export const updateDirectories = async (req, res) => {
         file.push(element.originalname)
       })
     }
+
     const userFileUpdate = await UserModel.findOneAndUpdate(
-      userName,
+      { userName },
       /** agregamos los archivos aplanados y le decimos que los guarde en la direccion del directorio que encontró */
       { $addToSet: { 'directories.$[dir].file': { $each: file } } },
       // le indicamos el directorio
-      { arrayFilters: [{ 'dir.nameDirectorio': nameDirectorio }] },
+      { arrayFilters: [{ 'dir.nameDirectory': nameDirectory }] },
       // devolvemos el actuali.directorieszado
       { new: true }
     )
+
     if (!userFileUpdate) {
       res.status(404).json({ error: 'User not found' })
       return
@@ -145,7 +201,99 @@ export const updateDirectories = async (req, res) => {
     res.status(500).json({ error: 'an internal error ocurred in the server ' })
   }
 }
-export const delteUser = async (req, res) => {
+/**
+ * This function delete a directory by the name directory specified
+ * @param {Object} req - The request object
+ * @param {Object} req.params - The request parameters
+ * @param {String} req.params.userName - The username of the user
+ * @param {String} req.params.nameDirectory - The name of the directory
+ * @param {function} next - The next middleware function in the aplicacion
+ * @param {String} res - The response object whit JSON
+ * @returns This function returns a JSON response whit message directory deleted correctly
+ */
+export const deleteDirectory = async (req, res, next) => {
+  const { userName, nameDirectory } = req.params
+
+  try {
+    const userExist = await UserModel.findOne({ userName })
+    if (!userExist) {
+      res.status(404).json({ error: 'User not found, id is malformed' })
+      return
+    }
+
+    const directories = userExist.directories.find(dir => dir.nameDirectory === nameDirectory)
+
+    if (!directories) {
+      res.status(404).json({ error: 'Directory not found, id is malformed' })
+      return
+    }
+
+    await UserModel.updateOne({ userName }, { $pull: { directories: { nameDirectory: `${nameDirectory}` } } }, { new: true })
+
+    res.status(200).json({ message: 'Directory deleted correctly ' })
+    return next()
+  } catch (error) {
+    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+  }
+}
+
+/**
+ * This function deletes files from a user's directory based on the provided file names.
+ * @param {Object} req - The request object, which contains information about the incoming HTTP request such as
+ * headers, parameters, and body.
+ * @param {Object} req.params - The request params
+ * @param {Object} req.body - The request body
+ * @param {String} req.params.userName - Tge username of the User
+ * @param {String} req.params.nameDirectory - Tge name of the Directory
+ * @param {Array} req.body - The array whit name of files to delete
+ * @param res - The `res` parameter is the response object that will be sent back to the client with
+ * the result of the HTTP request. It contains methods to set the status code, headers, and body of the
+ * response.
+ * @param next - `next` is a function that is called to pass control to the next middleware function in
+ * the stack. It is typically used to handle errors or to move on to the next operation after
+ * completing the current one.
+ * @returns  the result of calling the `next()` function, which is typically used to pass control to the
+ * next middleware function in the stack.
+ */
+export const deleteFileUser = async (req, res, next) => {
+  const { userName, nameDirectory } = req.params
+
+  const { files } = req.body
+
+  try {
+    if (!Array.isArray(files) || files.length === 0) {
+      res.status(400).json({ error: 'files is not array' })
+      return
+    }
+    const user = await UserModel.findOne({ userName })
+    if (!user) {
+      res.status(404).json({ error: 'User not found, id is malformed' })
+      return
+    }
+
+    const directory = user.directories.find(dir => dir.nameDirectory === nameDirectory)
+    if (!directory) {
+      res.status(404).json({ error: 'Directory not found, id is malformed' })
+      return
+    }
+    const filesToDelete = directory.file.filter((file) => !files.includes(file))
+
+    directory.file = filesToDelete
+    await user.save()
+
+    return next()
+  } catch (error) {
+    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+  }
+}
+
+/**
+ * this function delete a user by username specified
+ * @param {username} req
+ * @param {userdelete} res
+ * @returns This function returns a JSON whit user deleted
+ */
+export const deleteUser = async (req, res) => {
   const { userName } = req.params
 
   try {
