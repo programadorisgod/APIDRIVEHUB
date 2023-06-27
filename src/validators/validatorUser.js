@@ -27,15 +27,22 @@ export const ValidateData = async (req, res, next) => {
         res.status(400).json({ erro: 'Username is already in use ' })
         return
       }
+
       const passwordError = await verifyPassword(password)
       if (passwordError) {
         res.status(400).json({ error: 'the password is minor a 8 digits ' })
         return
       }
 
+      if (email.length === 0) {
+        res.status(400).json({ erro: 'Email empty' })
+        return
+      }
+
       const emailError = await verifyEmail(email)
       if (emailError === 'Email invalid') {
         res.status(400).json({ erro: 'Email invalid' })
+        return
       }
       if (emailError) {
         res.status(400).json({ erro: 'Email is already in use ' })

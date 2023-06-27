@@ -46,14 +46,13 @@ export const getUser = async (req, res) => {
 export const createUser = async (req, res) => {
   const { userName, email, password } = req.body
   try {
-    const avatar = 'userDefaul.png'
+    const avatar = 'userDefault.png'
     const passwordHas = await encryptPassword(password)
     const userNew = {
       avatar,
       userName,
       password: passwordHas,
-      email,
-      date: new Date()
+      email
     }
 
     const userCreated = await UserModel.create(userNew)

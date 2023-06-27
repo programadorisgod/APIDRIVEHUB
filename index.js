@@ -20,4 +20,4 @@ app.use(routerFile)
 connectDB()
 const Server = app.listen(PORT, () => console.log(`Server running in the port: ${PORT}`.bold))
 
-export { Server, app }
+export { app, Server }
