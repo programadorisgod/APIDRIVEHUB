@@ -28,7 +28,7 @@ app.use(routerAuth)
 app.use(routerFile)
 
 app.get('/', (req, res) => {
-  res.send('API REST for DriveHub')
+  res.send({ Hello: 'API REST for DriveHub' })
 })
 
 connectDB()
