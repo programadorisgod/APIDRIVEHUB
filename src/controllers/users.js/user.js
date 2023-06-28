@@ -304,7 +304,7 @@ export const deleteUser = async (req, res) => {
       res.status(500).json({ error: 'could not delete the user ' })
       return
     }
-    res.status(200).json('user deleted succefull')
+    res.status(200).json({ message: 'user deleted correctly' })
   } catch (error) {
     httpError(error, res)
   }
