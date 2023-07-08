@@ -3,3 +3,7 @@ node_modules
 .env.example
 uploads
 unidad
+.dockerignore
+.vscode/
+Dockerfile
+
