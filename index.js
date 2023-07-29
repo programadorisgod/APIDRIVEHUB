@@ -19,6 +19,7 @@ const limiter = rateLimit({
   max: 100
 })
 
+app.disable('x-powered-by')
 app.use(cors())
 app.use(express.json())
 app.use(urlencoded({ extended: true }))
@@ -26,6 +27,7 @@ app.use(limiter)
 app.use(routerUser)
 app.use(routerAuth)
 app.use(routerFile)
+
 
 app.get('/', (req, res) => {
   res.send({ Hello: 'API REST for DriveHub' })
