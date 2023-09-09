@@ -28,7 +28,6 @@ app.use(routerUser)
 app.use(routerAuth)
 app.use(routerFile)
 
-
 app.get('/', (req, res) => {
   res.send({ Hello: 'API REST for DriveHub' })
 })

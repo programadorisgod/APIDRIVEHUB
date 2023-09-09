@@ -2,6 +2,9 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import verifyFileExist from '../../helpers/verifyFile.js'
 import { httpError } from '../../helpers/handleError.js'
+import Throttle from 'throttle'
+import fs from 'node:fs'
+import UserModel from '../../models /user.js'
 
 const __dirname = fileURLToPath(import.meta.url)
 
@@ -18,16 +21,34 @@ const __dirname = fileURLToPath(import.meta.url)
  * error response with a JSON object containing an error message. If there is any other error, it sends
  * a 500 error response with a JSON object containing an error message.
  */
-export default function getFiles (req, res) {
-  const { fileName, directory } = req.params
+
+export default async function getFiles (req, res) {
+  const { fileName, directory, userName } = req.params
 
   try {
     const route = path.join(__dirname, `../../../../unidad/${directory}`, fileName)
+    const user = await UserModel.findOne({ userName })
+    if (!user) {
+      res.status(404).json({ error: 'user not found' })
+      return
+    }
     if (!verifyFileExist(route)) {
       res.status(404).json({ error: 'file not found' })
       return
     }
-    res.sendFile(route)
+    // Vamos a crear un stream de lectura para leer el archivo o flujo de datos
+    const fileStream = fs.createReadStream(route)
+
+    // Creamos un objeto de tipo Throttle para limitar la velocidad de descarga
+    if (user.premiun) {
+      const throttle = new Throttle(1024 * 1024 * 250) // 250MB/s
+      res.setHeader('Content-Type', 'application/octet-stream')
+      fileStream.pipe(throttle).pipe(res)
+      return
+    }
+    const throttle = new Throttle(1024 * 1024 * 50) // 10MB/s
+    res.setHeader('Content-Type', 'application/octet-stream')
+    fileStream.pipe(throttle).pipe(res)
   } catch (error) {
     httpError(error, res)
   }

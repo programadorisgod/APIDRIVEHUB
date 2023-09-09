@@ -1,7 +1,8 @@
 import { encryptPassword } from '../../helpers/handleBcrypt.js'
 import { httpError } from '../../helpers/handleError.js'
-
+import { deleteFile } from '../../middleware/directories/DeleteDirectory.js'
 import UserModel from '../../models /user.js'
+import { deleteFiles } from '../../middleware/directories/DeleteFiles.js'
 /**
  * This function get a user by id specified
  * @param {id} req
@@ -45,6 +46,12 @@ export const getUser = async (req, res) => {
  */
 export const createUser = async (req, res) => {
   const { userName, email, password } = req.body
+
+  if (Object.entries(req.body).length === 0) {
+    res.status(400).json({ error: 'body is empty' })
+    return
+  }
+
   try {
     const avatar = 'userDefaul.png'
     const passwordHas = await encryptPassword(password)
@@ -53,7 +60,9 @@ export const createUser = async (req, res) => {
       userName,
       password: passwordHas,
       email,
-      date: new Date()
+      date: new Date(),
+      premiun: false,
+      space: 0
     }
 
     const userCreated = await UserModel.create(userNew)
@@ -110,6 +119,20 @@ export const UpdateUser = async (req, res) => {
     }
 
     res.status(200).json({ userUpdate })
+  } catch (error) {
+    httpError(error, res)
+  }
+}
+
+export const updateMember = async (req, res) => {
+  const { userName, premiun } = req.body
+  try {
+    const userUpdatemembership = await UserModel.findOneAndUpdate(userName, { premiun }, { new: true })
+    if (!userUpdatemembership) {
+      res.status(500).json({ error: 'could not update the membership' })
+      return
+    }
+    res.status(200).json({ userUpdatemembership })
   } catch (error) {
     httpError(error, res)
   }
@@ -175,10 +198,12 @@ export const updateDirectories = async (req, res) => {
 
   try {
     const file = []
+    let space = 0
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
     if (req.files && req.files.gallery) {
       req.files.gallery.forEach(element => {
         file.push(element.originalname)
+        space += element.size
       })
     }
 
@@ -191,11 +216,17 @@ export const updateDirectories = async (req, res) => {
       // devolvemos el actuali.directorieszado
       { new: true }
     )
-
+    userFileUpdate.space += space
+    if (space > 5000000000) {
+      res.status(400).json({ error: 'no space' })
+      return
+    }
+    await userFileUpdate.save()
     if (!userFileUpdate) {
       res.status(404).json({ error: 'User not found' })
       return
     }
+
     // si se encontro el usuario
     res.status(200).json({ userFileUpdate })
   } catch (error) {
@@ -214,7 +245,8 @@ export const updateDirectories = async (req, res) => {
  */
 export const deleteDirectory = async (req, res, next) => {
   const { userName, nameDirectory } = req.params
-
+  let size = 0
+  let totalSize = 0
   try {
     const userExist = await UserModel.findOne({ userName })
     if (!userExist) {
@@ -229,6 +261,13 @@ export const deleteDirectory = async (req, res, next) => {
       return
     }
 
+    size = deleteFile(req, res, nameDirectory)
+    if (userExist.space !== 0) {
+      totalSize = userExist.space - size
+      userExist.space = totalSize
+    }
+
+    await userExist.save()
     await UserModel.updateOne({ userName }, { $pull: { directories: { nameDirectory: `${nameDirectory}` } } }, { new: true })
 
     res.status(200).json({ message: 'Directory deleted correctly ' })
@@ -260,7 +299,8 @@ export const deleteFileUser = async (req, res, next) => {
   const { userName, nameDirectory } = req.params
 
   const { files } = req.body
-
+  let size = 0
+  let totalSize = 0
   try {
     if (!Array.isArray(files) || files.length === 0) {
       res.status(400).json({ error: 'files is not array' })
@@ -278,12 +318,16 @@ export const deleteFileUser = async (req, res, next) => {
       return
     }
     const filesToDelete = directory.file.filter((file) => !files.includes(file))
+    size = await deleteFiles(req, res, nameDirectory, files)
 
+    totalSize = Number(user.space) - Number(size)
+
+    user.space = totalSize
     directory.file = filesToDelete
     await user.save()
-
-    return next()
+    res.status(200).json({ message: 'Files deleted correctly' })
   } catch (error) {
+    console.log(error)
     httpError(error, res)
   }
 }

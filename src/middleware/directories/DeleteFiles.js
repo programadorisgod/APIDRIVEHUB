@@ -2,17 +2,18 @@ import { unlink } from 'node:fs/promises'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import { httpError } from '../../helpers/handleError.js'
-const __dirname = fileURLToPath(import.meta.url)
+import getDirectorySize from '../../helpers/calculateSize.js'
 
-export const deleteFiles = async (req, res) => {
-  const { nameDirectory } = req.params
-  const { files } = req.body
+const __dirname = fileURLToPath(import.meta.url)
+export const deleteFiles = async (req, res, nameDirectory, files) => {
   try {
     const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
+    const size = await getDirectorySize(route)
     for (const file of files) {
       await unlink(`${route}/${file}`)
     }
-    res.status(200).json({ message: 'files deleted correctly' })
+    console.log(size, 'bytesx2')
+    return size
   } catch (error) {
     httpError(error, res)
   }

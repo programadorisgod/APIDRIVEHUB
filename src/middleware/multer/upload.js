@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 
   destination: function (req, file, cb) {
     const { nameDirectory } = req.params
-   
+
     const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
     cb(null, route)
   },
@@ -35,6 +35,7 @@ export const uploadFile = (req, res, next) => {
   upload(req, res, (error) => {
     if (error) {
       res.status(400).json({ error: error.message })
+      return
     }
     return next()
   })

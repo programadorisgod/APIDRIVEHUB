@@ -22,7 +22,15 @@ const UserSchema = new Schema({
   directories: [{
     nameDirectory: { type: String },
     file: [{ type: String }]
-  }]
+  }],
+  premiun: {
+    type: Boolean
+
+  },
+  space: {
+    type: Number
+
+  }
 }, {
   timestamps: true,
   versionKey: false
