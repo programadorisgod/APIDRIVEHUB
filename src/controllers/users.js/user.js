@@ -3,6 +3,7 @@ import { httpError } from '../../helpers/handleError.js'
 import { deleteFile } from '../../middleware/directories/DeleteDirectory.js'
 import UserModel from '../../models /user.js'
 import { deleteFiles } from '../../middleware/directories/DeleteFiles.js'
+
 /**
  * This function get a user by id specified
  * @param {id} req
@@ -125,9 +126,20 @@ export const UpdateUser = async (req, res) => {
 }
 
 export const updateMember = async (req, res) => {
-  const { userName, premiun } = req.body
+  const { userName } = req.params
+
+  let premiun
   try {
-    const userUpdatemembership = await UserModel.findOneAndUpdate(userName, { premiun }, { new: true })
+    const user = await UserModel.findOne({ userName })
+
+    if (!user) {
+      res.status(404).json({ error: 'Invalid id' })
+      return
+    }
+    premiun = !user.premiun
+
+    const userUpdatemembership = await UserModel.findOneAndUpdate({ userName }, { premiun }, { new: true })
+
     if (!userUpdatemembership) {
       res.status(500).json({ error: 'could not update the membership' })
       return
@@ -217,7 +229,7 @@ export const updateDirectories = async (req, res) => {
       { new: true }
     )
     userFileUpdate.space += space
-    if (space > 5000000000) {
+    if (space > 5000000000 && userFileUpdate.premiun === false) {
       res.status(400).json({ error: 'no space' })
       return
     }

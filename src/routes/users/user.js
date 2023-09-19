@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { UpdateUser, createDirectorie, createUser, deleteDirectory, deleteFileUser, deleteUser, getUser, updateDirectories } from '../../controllers/users.js/user.js'
+import { UpdateUser, createDirectorie, createUser, deleteDirectory, deleteFileUser, deleteUser, getUser, updateDirectories, updateMember } from '../../controllers/users.js/user.js'
 import { ValidateData } from '../../validators/validatorUser.js'
 import { checkAuth } from '../../middleware/auth/auth.js'
 import { uploadFile } from '../../middleware/multer/upload.js'
@@ -455,6 +455,7 @@ routerUser.put(`${path}/createDirectory/:userName`, checkAuth, createDirectorie,
  *                   example: Internal Server Error
  */
 routerUser.put(`${path}/addFields/:userName/:nameDirectory`, checkAuth, uploadFile, updateDirectories)
+routerUser.put(`${path}/updateMembership/:userName`, checkAuth, updateMember)
 /**
  * @swagger
  * /api/users/deleteDirectory/{userName}/{nameDirectory}:

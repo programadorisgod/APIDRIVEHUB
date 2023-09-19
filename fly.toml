@@ -1,10 +1,13 @@
-# fly.toml app configuration file generated for 2004 on 2023-07-16T19:24:39-05:00
+# fly.toml app configuration file generated for safesync on 2023-09-19T12:51:07-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "2004"
+app = "safesync"
 primary_region = "bog"
+
+[build]
+  dockerfile = "Dockerfile"
 
 [http_service]
   internal_port = 4000
@@ -13,3 +16,7 @@ primary_region = "bog"
   auto_start_machines = true
   min_machines_running = 0
   processes = ["app"]
+  [http_service.concurrency]
+    type = "requests"
+    hard_limit = 250
+    soft_limit = 200

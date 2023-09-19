@@ -32,7 +32,9 @@ export const Login = async (req, res) => {
       res.status(409).json({ error: 'Credentials invalid' })
       return
     }
+
     const token = generateToken(userEmailCorrect)
+
     res.status(200).json({ userEmailCorrect, token })
   } catch (error) {
     httpError(error, res)

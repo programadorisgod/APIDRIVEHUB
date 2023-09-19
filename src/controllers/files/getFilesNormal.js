@@ -36,11 +36,11 @@ export default async function getFiles (req, res) {
       res.status(404).json({ error: 'file not found' })
       return
     }
-    // Vamos a crear un stream de lectura para leer el archivo o flujo de datos
+
     const fileStream = fs.createReadStream(route)
 
-    // Creamos un objeto de tipo Throttle para limitar la velocidad de descarga
     if (user.premiun) {
+      // Creamos un objeto de tipo Throttle para limitar la velocidad de descarga
       const throttle = new Throttle(1024 * 1024 * 250) // 250MB/s
       res.setHeader('Content-Type', 'application/octet-stream')
       fileStream.pipe(throttle).pipe(res)

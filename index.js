@@ -9,11 +9,12 @@ import routerUser from './src/routes/users/user.js'
 import routerAuth from './src/routes/auth/login.js'
 import routerFile from './src/routes/file/getFile.js'
 import swaggerDocs from './src/routes/swagger.js'
+
 dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 4000
-
+const HOST = '0.0.0.0'
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100
@@ -29,12 +30,12 @@ app.use(routerAuth)
 app.use(routerFile)
 
 app.get('/', (req, res) => {
-  res.send({ Hello: 'API REST for DriveHub' })
+  res.send({ Hello: 'API REST for SafeSync' })
 })
 
 connectDB()
-const Server = app.listen(PORT, () => {
-  console.log(`Server running in the port: ${PORT}`.blue.bold)
+const Server = app.listen(PORT, HOST, () => {
+  console.log(`Server running in the address:${HOST}:${PORT}`.blue.bold)
   swaggerDocs(app, PORT)
 })
 
