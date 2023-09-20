@@ -1,4 +1,5 @@
 import { validateToken } from '../../helpers/handleJwt.js'
+import { verifyIdToken } from '../../helpers/verifyToken.js'
 
 export const checkAuth = async (req, res, next) => {
   try {
@@ -9,8 +10,9 @@ export const checkAuth = async (req, res, next) => {
       token = authorization.split(' ').pop()
     }
     const tokenData = await validateToken(token)
+    const idToken = await verifyIdToken(token)
 
-    if (tokenData.id) {
+    if (tokenData.id || idToken) {
       next()
     }
   } catch (error) {
