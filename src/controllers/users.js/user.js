@@ -47,7 +47,6 @@ export const getUser = async (req, res) => {
  */
 export const createUser = async (req, res) => {
   const { userName, email, password } = req.body
-
   if (Object.entries(req.body).length === 0) {
     res.status(400).json({ error: 'body is empty' })
     return

@@ -21,6 +21,7 @@ export const ValidateData = async (req, res, next) => {
   try {
     if (Object.keys(req.body).length !== 0) {
       const { password, userName, email } = req.body
+
       const userNameExist = await verifyUserName(userName)
 
       if (userNameExist) {
