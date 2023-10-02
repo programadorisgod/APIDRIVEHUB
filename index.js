@@ -1,6 +1,7 @@
 import express, { urlencoded } from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+// eslint-disable-next-line no-unused-vars
 import colors from 'colors'
 import { rateLimit } from 'express-rate-limit'
 
