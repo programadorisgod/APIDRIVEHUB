@@ -1,6 +1,7 @@
 import express, { urlencoded } from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+// eslint-disable-next-line no-unused-vars
 import colors from 'colors'
 import connectDB from './config/conectDatabase.js'
 import routerUser from './src/routes/users.js/user.js'
