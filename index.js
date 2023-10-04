@@ -4,7 +4,7 @@ import cors from 'cors'
 // eslint-disable-next-line no-unused-vars
 import colors from 'colors'
 import connectDB from './config/conectDatabase.js'
-import routerUser from './src/routes/users.js/user.js'
+import routerUser from './src/routes/users/user.js'
 import routerAuth from './src/routes/auth/login.js'
 import routerFile from './src/routes/file/getFile.js'
 dotenv.config()
@@ -14,6 +14,9 @@ const PORT = process.env.PORT || 4000
 app.use(cors())
 app.use(express.json())
 app.use(urlencoded({ extended: true }))
+app.get('/', (req, res) => {
+  res.json('Welcome to my API')
+})
 
 app.use(routerUser)
 app.use(routerAuth)

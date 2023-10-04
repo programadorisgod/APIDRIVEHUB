@@ -2,6 +2,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import verifyFileExist from '../../helpers/verifyFile.js'
 import { httpError } from '../../helpers/handleError.js'
+import { descryptIdentifier } from '../../helpers/encrypt.js'
+import verifyFileExistLink from '../../helpers/findFile.js'
 
 const __dirname = fileURLToPath(import.meta.url)
 
@@ -28,6 +30,21 @@ export default function getFiles (req, res) {
       return
     }
     res.sendFile(route)
+  } catch (error) {
+    httpError(error, res)
+  }
+}
+
+export async function getFilebyLink (req, res) {
+  const { file } = req.query
+  const nameFile = descryptIdentifier(file)
+  try {
+    const fileExist = await verifyFileExistLink(nameFile)
+    if (!fileExist) {
+      res.status(404).json({ error: 'file not found' })
+      return
+    }
+    res.sendFile(fileExist)
   } catch (error) {
     httpError(error, res)
   }
