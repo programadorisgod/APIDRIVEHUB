@@ -35,17 +35,17 @@ export const ValidateData = async (req, res, next) => {
       }
 
       if (email.length === 0) {
-        res.status(400).json({ erro: 'Email empty' })
+        res.status(400).json({ error: 'Email empty' })
         return
       }
 
       const emailError = await verifyEmail(email)
       if (emailError === 'Email invalid') {
-        res.status(400).json({ erro: 'Email invalid' })
+        res.status(400).json({ error: 'Email invalid' })
         return
       }
       if (emailError) {
-        res.status(400).json({ erro: 'Email is already in use ' })
+        res.status(400).json({ error: 'Email is already in use ' })
         return
       }
 

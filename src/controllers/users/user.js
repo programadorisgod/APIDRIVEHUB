@@ -9,11 +9,11 @@ import UserModel from '../../models /user.js'
  * @returns
  */
 export const getUser = async (req, res) => {
-  const { userName } = req.params
+  const { id } = req.params
 
   try {
     /** Buscamos al usuario por su nombre de usuario ya que es unico */
-    const userExist = await UserModel.findOne({ userName })
+    const userExist = await UserModel.findById({ _id: id })
 
     if (!userExist || Object.keys(userExist).length === 0) {
       res.status(404).json({ error: 'id is malformed user not found ' })
@@ -27,6 +27,7 @@ export const getUser = async (req, res) => {
 
     res.status(200).json({ user })
   } catch (error) {
+    console.log(error)
     httpError(error, res)
   }
 }
@@ -141,7 +142,7 @@ export const createDirectorie = async (req, res, next) => {
     // verificar Si el directorio existe
     const verifyDirectory = user.directories.find(dir => dir.nameDirectorio === nameDirectory)
     if (verifyDirectory) {
-      res.status(409).json('No se pudo crear el directorio, porque ya existe uno con ese nombre')
+      res.status(409).json({ error: 'No se pudo crear el directorio, porque ya existe uno con ese nombre' })
       return
     }
 

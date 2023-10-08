@@ -22,7 +22,7 @@ export const httpError = (error, res) => {
   }
   if (error instanceof MongooseError) {
     statusCode = 500
-    name = 'Erro in the DB mongoose'
+    name = 'Error in the DB mongoose'
   }
 
   res.status(statusCode).json({ message: name })

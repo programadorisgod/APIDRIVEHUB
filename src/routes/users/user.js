@@ -12,7 +12,7 @@ const routerUser = Router()
 
 const path = '/api/users'
 
-routerUser.get(`${path}/:userName`, checkAuth, getUser)
+routerUser.get(`${path}/:id`, checkAuth, getUser)
 routerUser.post(`${path}/create`, ValidateData, createUser)
 routerUser.put(`${path}/update/:id`, checkAuth, ValidateData, uploadAvatar, UpdateUser)
 routerUser.put(`${path}/createDirectory/:userName`, checkAuth, createDirectorie, createFile)
