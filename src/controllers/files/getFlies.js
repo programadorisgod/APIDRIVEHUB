@@ -36,10 +36,11 @@ export default function getFiles (req, res) {
 }
 
 export async function getFilebyLink (req, res) {
-  const { file } = req.query
+  const { Directory, file } = req.query
+  console.log(file, Directory)
   const nameFile = descryptIdentifier(file)
   try {
-    const fileExist = await verifyFileExistLink(nameFile)
+    const fileExist = await verifyFileExistLink(nameFile, Directory)
     if (!fileExist) {
       res.status(404).json({ error: 'file not found' })
       return
