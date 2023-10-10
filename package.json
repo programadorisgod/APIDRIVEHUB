@@ -5,10 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "cross-env NODE_ENV=developent nodemon index.js",
+    "dev": "cross-env NODE_ENV=developent node --watch index.js",
     "start": "cross-env NODE_ENV=production node index.js",
     "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --verbose  --forceExit",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test --watch"
   },
   "author": "Camilo Developer",
   "license": "ISC",
@@ -23,7 +23,6 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.3.1",
     "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.0.1",
     "standard": "^17.1.0"
   },
   "devDependencies": {
