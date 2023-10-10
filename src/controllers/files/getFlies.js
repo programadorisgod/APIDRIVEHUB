@@ -36,8 +36,8 @@ export default function getFiles (req, res) {
 }
 
 export async function getFilebyLink (req, res) {
-  const { Directory, file } = req.query
-  console.log(file, Directory)
+  const { file } = req.query
+  const { Directory } = req.query
   const nameFile = descryptIdentifier(file)
   try {
     const fileExist = await verifyFileExistLink(nameFile, Directory)
@@ -47,6 +47,7 @@ export async function getFilebyLink (req, res) {
     }
     res.sendFile(fileExist)
   } catch (error) {
+    console.log(error)
     httpError(error, res)
   }
 }
