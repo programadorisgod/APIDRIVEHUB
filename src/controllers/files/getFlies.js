@@ -4,7 +4,7 @@ import verifyFileExist from '../../helpers/verifyFile.js'
 import { httpError } from '../../helpers/handleError.js'
 import { descryptIdentifier } from '../../helpers/encrypt.js'
 import verifyFileExistLink from '../../helpers/findFile.js'
-
+import fs from 'fs'
 const __dirname = fileURLToPath(import.meta.url)
 
 /**
@@ -29,6 +29,9 @@ export default function getFiles (req, res) {
       res.status(404).json({ error: 'file not found' })
       return
     }
+    const stat = fs.statSync(route)
+    const fileSize = stat.size
+    res.header('Content-Length', fileSize)
     res.sendFile(route)
   } catch (error) {
     httpError(error, res)
@@ -45,6 +48,7 @@ export async function getFilebyLink (req, res) {
       res.status(404).json({ error: 'file not found' })
       return
     }
+
     res.sendFile(fileExist)
   } catch (error) {
     console.log(error)
