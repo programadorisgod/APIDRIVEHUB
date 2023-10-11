@@ -14,22 +14,25 @@ const storage = multer.diskStorage({
 
   destination: function (req, file, cb) {
     const { nameDirectory } = req.params
-    console.log(nameDirectory, 1)
     const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
     cb(null, route)
   },
   filename: function (req, file, cb) {
-    console.log(file)
     cb(null, file.originalname)
   }
 })
+
+function checkFileType (req, file, cb) {
+  file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf-8')
+  cb(null, true)
+}
 
 /* This code is defining a middleware function called `uploadFile` that uses the `multer` library to
 handle file uploads. The `multer` middleware is configured with a `storage` object that specifies
 the destination directory and filename for uploaded files. The `fields` method is used to specify
 that the middleware should expect a file with the name `gallery`. */
 
-const upload = multer({ storage }).fields([{ name: 'gallery' }])
+const upload = multer({ storage, fileFilter: checkFileType }).fields([{ name: 'gallery' }])
 
 export const uploadFile = (req, res, next) => {
   upload(req, res, (error) => {

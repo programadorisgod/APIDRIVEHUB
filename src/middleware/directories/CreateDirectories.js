@@ -41,7 +41,6 @@ export const createFile = async (req, res, next) => {
       /** unimos la ruta con el directorio en el que estemos, nos devolvemos y accedemos a la raiz  */
       const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
 
-      // creamos la carpeta
       await mkdir(route, { recursive: true })
       // pasamos a la siguiente peticion
       return next()
@@ -49,5 +48,14 @@ export const createFile = async (req, res, next) => {
     return next()
   } catch (error) {
     httpError(error, res)
+  }
+}
+
+export const createDirectory = async (nameDirectory) => {
+  try {
+    const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
+    await mkdir(route, { recursive: true })
+  } catch (s) {
+
   }
 }

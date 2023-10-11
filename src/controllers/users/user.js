@@ -1,5 +1,6 @@
 import { encryptPassword } from '../../helpers/handleBcrypt.js'
 import { httpError } from '../../helpers/handleError.js'
+import { createDirectory } from '../../middleware/directories/CreateDirectories.js'
 
 import UserModel from '../../models /user.js'
 /**
@@ -43,24 +44,32 @@ export const getUser = async (req, res) => {
  * returned with a status code of 201. If there is an error creating the user, a JSON object with an
  * error message is returned with a status code of 500.
  */
-export const createUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
   const { userName, email, password } = req.body
   try {
     const avatar = 'userDefault.png'
     const passwordHas = await encryptPassword(password)
+    const nameDirectory = `Default${userName}`
     const userNew = {
       avatar,
       userName,
       password: passwordHas,
-      email
+      email,
+      directories: [
+        {
+          nameDirectory,
+          files: []
+        }
+      ]
     }
-
+    createDirectory(nameDirectory)
     const userCreated = await UserModel.create(userNew)
     if (!userCreated) {
       res.status(500).json({ error: 'Could not create the user' })
       return
     }
     res.status(201).json({ userCreated })
+    return next()
   } catch (error) {
     httpError(error, res)
   }
@@ -293,13 +302,14 @@ export const deleteFileUser = async (req, res, next) => {
       res.status(404).json({ error: 'Directory not found, id is malformed' })
       return
     }
-    const filesToDelete = directory.file.filter((file) => !files.includes(file))
+    const filesToDelete = directory.files.filter((file) => !files.includes(file.nameFile))
 
-    directory.file = filesToDelete
+    directory.files = filesToDelete
     await user.save()
 
     return next()
   } catch (error) {
+    console.log(error)
     httpError(error, res)
   }
 }
