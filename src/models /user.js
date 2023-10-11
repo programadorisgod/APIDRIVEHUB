@@ -21,7 +21,10 @@ const UserSchema = new Schema({
   },
   directories: [{
     nameDirectory: { type: String },
-    file: [{ type: String }]
+    files: [{
+      nameFile: { type: String },
+      Date: { type: String }
+    }]
   }]
 }, {
   timestamps: true,

@@ -34,6 +34,7 @@ export default function getFiles (req, res) {
     res.header('Content-Length', fileSize)
     res.sendFile(route)
   } catch (error) {
+    console.log(error)
     httpError(error, res)
   }
 }

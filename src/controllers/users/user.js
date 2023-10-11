@@ -27,7 +27,6 @@ export const getUser = async (req, res) => {
 
     res.status(200).json({ user })
   } catch (error) {
-    console.log(error)
     httpError(error, res)
   }
 }
@@ -175,19 +174,34 @@ export const updateDirectories = async (req, res) => {
 
   try {
     const file = []
+    const year = new Date().getFullYear()
+    const month = new Date().getMonth() + 1
+    const day = new Date().getDate()
+    // capture la hora actual
+    const hour = new Date().toLocaleTimeString('es-CO', { hour12: false })
+    const date = `${year}-${month}-${day}-${hour}`.toString()
+
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
     if (req.files && req.files.gallery) {
       req.files.gallery.forEach(element => {
-        file.push(element.originalname)
+        file.push({ nameFile: element.originalname, Date: date })
       })
     }
 
     const userFileUpdate = await UserModel.findOneAndUpdate(
       { userName },
       /** agregamos los archivos aplanados y le decimos que los guarde en la direccion del directorio que encontró */
-      { $addToSet: { 'directories.$[dir].file': { $each: file } } },
+      {
+        $addToSet: {
+          'directories.$[dir].files': { $each: file }
+        }
+
+      },
       // le indicamos el directorio
-      { arrayFilters: [{ 'dir.nameDirectory': nameDirectory }] },
+      {
+        arrayFilters: [{ 'dir.nameDirectory': nameDirectory }],
+        new: true
+      },
       // devolvemos el actuali.directorieszado
       { new: true }
     )
@@ -199,6 +213,8 @@ export const updateDirectories = async (req, res) => {
     // si se encontro el usuario
     res.status(200).json({ userFileUpdate })
   } catch (error) {
+    console.log(error)
+
     httpError(error, res)
   }
 }
