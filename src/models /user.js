@@ -25,7 +25,15 @@ const UserSchema = new Schema({
       nameFile: { type: String },
       Date: { type: String }
     }]
-  }]
+  }],
+  premiun: {
+    type: Boolean
+
+  },
+  space: {
+    type: Number
+
+  }
 }, {
   timestamps: true,
   versionKey: false

@@ -5,8 +5,9 @@ import { httpError } from '../../helpers/handleError.js'
 import { descryptIdentifier } from '../../helpers/encrypt.js'
 import verifyFileExistLink from '../../helpers/findFile.js'
 import fs from 'fs'
+import UserModel from '../../models /user.js'
+import Throttle from 'throttle'
 const __dirname = fileURLToPath(import.meta.url)
-
 /**
  * This function retrieves a file from a specified directory and sends it as a response, while handling
  * errors.
@@ -20,14 +21,25 @@ const __dirname = fileURLToPath(import.meta.url)
  * error response with a JSON object containing an error message. If there is any other error, it sends
  * a 500 error response with a JSON object containing an error message.
  */
-export default function getFiles (req, res) {
-  const { fileName, directory } = req.params
+export default async function getFiles (req, res) {
+  const { fileName, directory, userName } = req.params
 
   try {
     const route = path.join(__dirname, `../../../../unidad/${directory}`, fileName)
+    const user = await UserModel.findOne({ userName })
+    if (!user) {
+      res.status(404).json({ error: 'user not found' })
+      return
+    }
     if (!verifyFileExist(route)) {
       res.status(404).json({ error: 'file not found' })
       return
+    }
+    // stream de lectura para leer el archivo
+    const fileStream = fs.createReadStream(route)
+    if (user.premiun) {
+      const throttle = new Throttle(1024 * 1024 * 250)// 250MB/s
+      res.setHeader('Content-Type', 'aplication/octet')
     }
     const stat = fs.statSync(route)
     const fileSize = stat.size

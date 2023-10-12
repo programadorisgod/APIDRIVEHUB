@@ -27,7 +27,8 @@
     "qrcode": "^1.5.3",
     "standard": "^17.1.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "throttle": "^1.0.3"
   },
   "devDependencies": {
     "eslint": "^8.43.0",
