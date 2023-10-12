@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for safesync on 2023-09-19T12:51:07-05:00
+# fly.toml app configuration file generated for safesync on 2023-10-12T13:05:52-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = "safesync"
-primary_region = "bog"
+primary_region = "mia"
 
 [build]
   dockerfile = "Dockerfile"
@@ -20,3 +20,5 @@ primary_region = "bog"
     type = "requests"
     hard_limit = 250
     soft_limit = 200
+
+  

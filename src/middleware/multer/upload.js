@@ -15,6 +15,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const { nameDirectory } = req.params
     const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
+    console.log(route)
     cb(null, route)
   },
   filename: function (req, file, cb) {
