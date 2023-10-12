@@ -3,14 +3,15 @@ import getFiles, { getFilebyLink } from '../../controllers/files/getFlies.js'
 import getAvatars from '../../controllers/files/getAvatars.js'
 import { encryptIdentifier } from '../../helpers/encrypt.js'
 import { convertFile } from '../../helpers/convert.js'
+import { checkAuth } from '../../middleware/auth/auth.js'
 
 const routerFile = Router()
 const path = '/api/files'
 
-routerFile.get(`${path}/unidad/:directory/:fileName`, getFiles)
+routerFile.get(`${path}/unidad/:userName/:directory/:fileName`, checkAuth, getFiles)
 routerFile.get(`${path}/avatars/:fileName`, getAvatars)
-routerFile.get(`${path}/getlink`, encryptIdentifier)
-routerFile.get(`${path}/open-file`, getFilebyLink)
-routerFile.get(`${path}/convert/:Directory/:fileName/:ext`, convertFile)
+routerFile.get(`${path}/getlink`, checkAuth, encryptIdentifier)
+routerFile.get(`${path}/open-file`, checkAuth, getFilebyLink)
+routerFile.get(`${path}/convert/:Directory/:fileName/:ext`, checkAuth, convertFile)
 
 export default routerFile

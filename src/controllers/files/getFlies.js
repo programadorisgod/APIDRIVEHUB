@@ -35,16 +35,24 @@ export default async function getFiles (req, res) {
       res.status(404).json({ error: 'file not found' })
       return
     }
-    // stream de lectura para leer el archivo
+
+    res.setHeader('Content-Type', 'application/octet-stream')
+
     const fileStream = fs.createReadStream(route)
-    if (user.premiun) {
+    if (user.premium) {
+      const stat = fs.statSync(route)
+      const fileSize = stat.size
+      res.header('Content-Length', fileSize)
       const throttle = new Throttle(1024 * 1024 * 250)// 250MB/s
-      res.setHeader('Content-Type', 'aplication/octet')
+      fileStream.pipe(throttle).pipe(res)
+      return
     }
+
     const stat = fs.statSync(route)
     const fileSize = stat.size
     res.header('Content-Length', fileSize)
-    res.sendFile(route)
+    const throttle = new Throttle(1024 * 1024 * 50)// 10MB/s
+    fileStream.pipe(throttle).pipe(res)
   } catch (error) {
     console.log(error)
     httpError(error, res)

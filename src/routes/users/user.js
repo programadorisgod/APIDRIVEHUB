@@ -1,12 +1,11 @@
 import { Router } from 'express'
-import { UpdateUser, createDirectorie, createUser, deleteDirectory, deleteFileUser, deleteUser, getUser, updateDirectories } from '../../controllers/users/user.js'
+import { UpdateUser, createDirectorie, createUser, deleteDirectory, deleteFileUser, deleteUser, getUser, updateDirectories, updateMember } from '../../controllers/users/user.js'
 import { ValidateData } from '../../validators/validatorUser.js'
 import { checkAuth } from '../../middleware/auth/auth.js'
 import { uploadFile } from '../../middleware/multer/upload.js'
 import { createFile } from '../../middleware/directories/CreateDirectories.js'
 import { uploadAvatar } from '../../middleware/multer/uploadAvatar.js'
-import { deleteFile } from '../../middleware/directories/DeleteDirectory.js'
-import { deleteFiles } from '../../middleware/directories/DeleteFiles.js'
+import { verifySpace } from '../../helpers/verifySpace.js'
 
 const routerUser = Router()
 
@@ -397,7 +396,8 @@ routerUser.put(`${path}/createDirectory/:userName`, checkAuth, createDirectorie,
  *                   type: string
  *                   example: Internal Server Error
  */
-routerUser.put(`${path}/addFields/:userName/:nameDirectory`, checkAuth, uploadFile, updateDirectories)
+routerUser.put(`${path}/addFields/:userName/:nameDirectory`, checkAuth, verifySpace, uploadFile, updateDirectories)
+routerUser.put(`${path}/updateMembership/:userName`, checkAuth, updateMember)
 /**
  * @swagger
  * /api/users/deleteDirectory/{userName}/{nameDirectory}:
@@ -465,7 +465,7 @@ routerUser.put(`${path}/addFields/:userName/:nameDirectory`, checkAuth, uploadFi
  *                   type: string
  *                   example: 'Internal Server Error'
  */
-routerUser.delete(`${path}/deleteDirectory/:userName/:nameDirectory`, checkAuth, deleteDirectory, deleteFile)
+routerUser.delete(`${path}/deleteDirectory/:userName/:nameDirectory`, checkAuth, deleteDirectory)
 /**
  * @swagger
  * /api/users/deleteFiles/{userName}/{nameDirectory}:
@@ -533,7 +533,7 @@ routerUser.delete(`${path}/deleteDirectory/:userName/:nameDirectory`, checkAuth,
  *                   type: string
  *                   example: 'Internal Server Error'
  */
-routerUser.delete(`${path}/deleteFiles/:userName/:nameDirectory`, checkAuth, deleteFileUser, deleteFiles)
+routerUser.delete(`${path}/deleteFiles/:userName/:nameDirectory`, checkAuth, deleteFileUser)
 
 /**
  * @swagger

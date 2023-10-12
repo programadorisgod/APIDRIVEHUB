@@ -1,7 +1,8 @@
 import { encryptPassword } from '../../helpers/handleBcrypt.js'
 import { httpError } from '../../helpers/handleError.js'
 import { createDirectory } from '../../middleware/directories/CreateDirectories.js'
-
+import { deleteFile } from '../../middleware/directories/DeleteDirectory.js'
+import { deleteFiles } from '../../middleware/directories/DeleteFiles.js'
 import UserModel from '../../models /user.js'
 /**
  * This function get a user by id specified
@@ -61,7 +62,9 @@ export const createUser = async (req, res, next) => {
           files: []
         }
       ]
+
     }
+
     createDirectory(nameDirectory)
     const userCreated = await UserModel.create(userNew)
     if (!userCreated) {
@@ -189,11 +192,13 @@ export const updateDirectories = async (req, res) => {
     // capture la hora actual
     const hour = new Date().toLocaleTimeString('es-CO', { hour12: false })
     const date = `${year}-${month}-${day}-${hour}`.toString()
+    let space = 0
 
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
     if (req.files && req.files.gallery) {
       req.files.gallery.forEach(element => {
         file.push({ nameFile: element.originalname, Date: date })
+        space += element.size
       })
     }
 
@@ -214,7 +219,8 @@ export const updateDirectories = async (req, res) => {
       // devolvemos el actuali.directorieszado
       { new: true }
     )
-
+    userFileUpdate.space += space
+    await userFileUpdate.save()
     if (!userFileUpdate) {
       res.status(404).json({ error: 'User not found' })
       return
@@ -239,7 +245,7 @@ export const updateDirectories = async (req, res) => {
  */
 export const deleteDirectory = async (req, res, next) => {
   const { userName, nameDirectory } = req.params
-
+  let size = 0
   try {
     const userExist = await UserModel.findOne({ userName })
     if (!userExist) {
@@ -255,7 +261,11 @@ export const deleteDirectory = async (req, res, next) => {
     }
 
     await UserModel.updateOne({ userName }, { $pull: { directories: { nameDirectory: `${nameDirectory}` } } }, { new: true })
-
+    size = await deleteFile(req, res)
+    if (userExist.space !== 0) {
+      userExist.space -= size
+    }
+    await userExist.save()
     res.status(200).json({ message: 'Directory deleted correctly ' })
     return next()
   } catch (error) {
@@ -285,12 +295,14 @@ export const deleteFileUser = async (req, res, next) => {
   const { userName, nameDirectory } = req.params
 
   const { files } = req.body
-
   try {
+    let totalSize = 0
+
     if (!Array.isArray(files) || files.length === 0) {
       res.status(400).json({ error: 'files is not array' })
       return
     }
+
     const user = await UserModel.findOne({ userName })
     if (!user) {
       res.status(404).json({ error: 'User not found, id is malformed' })
@@ -304,10 +316,17 @@ export const deleteFileUser = async (req, res, next) => {
     }
     const filesToDelete = directory.files.filter((file) => !files.includes(file.nameFile))
 
+    const size = await deleteFiles(req, res)
+
+    totalSize = Number(user.space) - Number(size)
+
+    user.space = totalSize
+
     directory.files = filesToDelete
+
     await user.save()
 
-    return next()
+    res.status(200).json({ message: 'files deleted correctly' })
   } catch (error) {
     console.log(error)
     httpError(error, res)
@@ -331,6 +350,31 @@ export const deleteUser = async (req, res) => {
       return
     }
     res.status(200).json('user deleted succefull')
+  } catch (error) {
+    httpError(error, res)
+  }
+}
+
+export const updateMember = async (req, res) => {
+  const { userName } = req.params
+  try {
+    let premium
+    const user = await UserModel.findOne({ userName })
+
+    if (!user) {
+      res.status(404).json({ error: 'Invalid id' })
+      return
+    }
+    // eslint-disable-next-line prefer-const
+    premium = !user.premium
+
+    const userUpdatemembership = await UserModel.findOneAndUpdate({ userName }, { premium }, { new: true })
+    if (!userUpdatemembership) {
+      res.status(500).json({ error: 'could not update the membership' })
+      return
+    }
+
+    res.status(200).json({ userUpdatemembership })
   } catch (error) {
     httpError(error, res)
   }

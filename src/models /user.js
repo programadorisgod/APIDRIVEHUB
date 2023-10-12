@@ -26,13 +26,13 @@ const UserSchema = new Schema({
       Date: { type: String }
     }]
   }],
-  premiun: {
-    type: Boolean
-
+  premium: {
+    type: Boolean,
+    default: false
   },
   space: {
-    type: Number
-
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true,
