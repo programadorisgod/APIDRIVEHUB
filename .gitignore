@@ -5,3 +5,5 @@ uploads
 unidad
 test
 jest.config.js
+Dockerfile
+.dockerignore
