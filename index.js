@@ -16,7 +16,7 @@ app.use(cors())
 app.use(express.json())
 app.use(urlencoded({ extended: true }))
 app.get('/', (req, res) => {
-  res.json({ msg: 'Welcome to my API' })
+  res.json({ msg: 'Welcome to DRIVEHUB' })
 })
 
 app.use(routerUser)
