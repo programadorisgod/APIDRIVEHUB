@@ -2,7 +2,7 @@ import multer from 'multer'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 const __dirname = fileURLToPath(import.meta.url)
-
+console.log(__dirname)
 /* This code is configuring the storage engine to be used by the multer middleware for handling file
 uploads. It specifies the destination directory where uploaded files will be stored and the filename
 that will be used for each uploaded file. The `destination` function takes the `req`, `file`, and
