@@ -8,6 +8,7 @@ import routerUser from './src/routes/users/user.js'
 import routerAuth from './src/routes/auth/login.js'
 import routerFile from './src/routes/file/getFile.js'
 import swaggerDocs from './src/routes/swagger.js'
+import routerEmail from './src/routes/emails/email.js'
 dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 4000
@@ -22,6 +23,8 @@ app.get('/', (req, res) => {
 app.use(routerUser)
 app.use(routerAuth)
 app.use(routerFile)
+app.use(routerEmail)
+
 connectDB()
 const Server = app.listen(PORT, () => {
   console.log(`Server running in the port: ${PORT}`.bold)

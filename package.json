@@ -22,16 +22,19 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "fluent-ffmpeg": "^2.1.2",
+    "googleapis": "^127.0.0",
     "jsonwebtoken": "^9.0.0",
     "libreoffice-convert": "^1.4.1",
     "mongoose": "^7.6.1",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.6",
     "qrcode": "^1.5.3",
     "sharp": "^0.32.6",
     "standard": "^17.1.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
-    "throttle": "^1.0.3"
+    "throttle": "^1.0.3",
+    "xoauth2": "^1.2.0"
   },
   "devDependencies": {
     "eslint": "^8.43.0",
