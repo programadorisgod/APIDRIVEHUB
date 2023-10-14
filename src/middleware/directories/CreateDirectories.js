@@ -54,7 +54,9 @@ export const createFile = async (req, res, next) => {
 export const createDirectory = async (nameDirectory) => {
   try {
     const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
+    const routeMiniature = path.join(__dirname, `../../../../unidad/${nameDirectory}/gallery`)
     await mkdir(route, { recursive: true })
+    await mkdir(routeMiniature, { recursive: true })
   } catch (s) {
 
   }

@@ -396,7 +396,7 @@ routerUser.put(`${path}/createDirectory/:userName`, checkAuth, createDirectorie,
  *                   type: string
  *                   example: Internal Server Error
  */
-routerUser.put(`${path}/addFields/:userName/:nameDirectory`, checkAuth, verifySpace, uploadFile, updateDirectories)
+routerUser.put(`${path}/addFields/:userName/:nameDirectory/:Default`, checkAuth, verifySpace, uploadFile, updateDirectories)
 routerUser.put(`${path}/updateMembership/:userName`, checkAuth, updateMember)
 /**
  * @swagger

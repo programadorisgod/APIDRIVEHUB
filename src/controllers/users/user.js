@@ -1,3 +1,4 @@
+import getMiniature from '../../helpers/getMiniature.js'
 import { encryptPassword } from '../../helpers/handleBcrypt.js'
 import { httpError } from '../../helpers/handleError.js'
 import { createDirectory } from '../../middleware/directories/CreateDirectories.js'
@@ -182,14 +183,13 @@ export const createDirectorie = async (req, res, next) => {
  * successful, or an error message if there was an error.
  */
 export const updateDirectories = async (req, res) => {
-  const { userName, nameDirectory } = req.params
+  const { userName, nameDirectory, Default } = req.params
 
   try {
     const file = []
     const year = new Date().getFullYear()
     const month = new Date().getMonth() + 1
     const day = new Date().getDate()
-    // capture la hora actual
     const hour = new Date().toLocaleTimeString('es-CO', { hour12: false })
     const date = `${year}-${month}-${day}-${hour}`.toString()
     let space = 0
@@ -197,8 +197,9 @@ export const updateDirectories = async (req, res) => {
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
     if (req.files && req.files.gallery) {
       req.files.gallery.forEach(element => {
-        file.push({ nameFile: element.originalname, Date: date })
+        file.push({ nameFile: element.originalname, Date: date, size: element.size })
         space += element.size
+        getMiniature(nameDirectory, Default, element.originalname)
       })
     }
 
@@ -216,16 +217,18 @@ export const updateDirectories = async (req, res) => {
         arrayFilters: [{ 'dir.nameDirectory': nameDirectory }],
         new: true
       },
-      // devolvemos el actuali.directorieszado
+      // devolvemos al usuario actualizado
       { new: true }
     )
+
     userFileUpdate.space += space
     await userFileUpdate.save()
+
     if (!userFileUpdate) {
       res.status(404).json({ error: 'User not found' })
       return
     }
-    // si se encontro el usuario
+
     res.status(200).json({ userFileUpdate })
   } catch (error) {
     console.log(error)

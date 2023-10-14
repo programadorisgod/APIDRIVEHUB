@@ -10,11 +10,11 @@ export const verifySpace = (req, res, next) => {
       res.status(404).json({ error: 'user not found' })
       return
     }
-    if (user.space > 5000000000 && user.premium === false) {
+    const size = user.space / 1024 ** 3
+    if (size > 4.66 && user.premium === false) {
       res.status(400).json({ error: 'no space' })
       return
     }
-    console.log('xxxx')
     return next()
   } catch (error) {
     httpError(error, res)

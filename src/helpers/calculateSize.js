@@ -18,6 +18,6 @@ export default async function getDirectorySize (route) {
   }
 
   const totalSize = await calculateSize(route)
-  console.log(totalSize, 'bytes')
+
   return totalSize
 }

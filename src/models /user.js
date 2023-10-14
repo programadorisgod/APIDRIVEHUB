@@ -23,7 +23,8 @@ const UserSchema = new Schema({
     nameDirectory: { type: String },
     files: [{
       nameFile: { type: String },
-      Date: { type: String }
+      Date: { type: String },
+      size: { type: Number }
     }]
   }],
   premium: {
