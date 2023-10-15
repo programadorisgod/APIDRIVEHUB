@@ -9,7 +9,7 @@ const __dirname = fileURLToPath(import.meta.url)
 export default async function getMiniature (nameDirectory, Default, nameFile) {
   try {
     const routeOriginal = path.join(__dirname, `../../../unidad/${nameDirectory}`, `${nameFile}`)
-    const routeMiniature = path.join(__dirname, `../../../unidad/${Default}/gallery`)
+    const routeMiniature = path.join(__dirname, `../../../unidad/${Default}/gallery/`)
     const ext = nameFile.split('.').pop().toLowerCase()
 
     const typeDoc = {
@@ -19,7 +19,7 @@ export default async function getMiniature (nameDirectory, Default, nameFile) {
       gif: getMiniatureImages,
       webp: getMiniatureImages,
       svg: getMiniatureImages,
-      // ahora las de video
+
       mp4: getMiniatureVideo,
       avi: getMiniatureVideo,
       mkv: getMiniatureVideo,

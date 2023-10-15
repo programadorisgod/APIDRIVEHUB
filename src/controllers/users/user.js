@@ -190,8 +190,7 @@ export const updateDirectories = async (req, res) => {
     const year = new Date().getFullYear()
     const month = new Date().getMonth() + 1
     const day = new Date().getDate()
-    const hour = new Date().toLocaleTimeString('es-CO', { hour12: false })
-    const date = `${year}-${month}-${day}-${hour}`.toString()
+    const date = `${year}-${month}-${day}`.toString()
     let space = 0
 
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
@@ -321,9 +320,15 @@ export const deleteFileUser = async (req, res, next) => {
 
     const size = await deleteFiles(req, res)
 
+    if (size !== Number(size)) {
+      res.status(404).json({ error: 'files not found' })
+      return
+    }
     totalSize = Number(user.space) - Number(size)
 
-    user.space = totalSize
+    if (user.space > 0) {
+      user.space = totalSize
+    }
 
     directory.files = filesToDelete
 
