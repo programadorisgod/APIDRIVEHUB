@@ -1,7 +1,7 @@
-import fs from 'fs'
-export default function verifyFileExist (path) {
+import fs from 'fs/promises'
+export default async function verifyFileExist (path) {
   try {
-    fs.accessSync(path)
+    await fs.access(path)
     return true
   } catch (e) {
     return false

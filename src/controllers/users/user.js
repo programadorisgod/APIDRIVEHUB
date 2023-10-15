@@ -321,9 +321,15 @@ export const deleteFileUser = async (req, res, next) => {
 
     const size = await deleteFiles(req, res)
 
+    if (size !== Number(size)) {
+      res.status(404).json({ error: 'files not found' })
+      return
+    }
     totalSize = Number(user.space) - Number(size)
 
-    user.space = totalSize
+    if (user.space > 0) {
+      user.space = totalSize
+    }
 
     directory.files = filesToDelete
 

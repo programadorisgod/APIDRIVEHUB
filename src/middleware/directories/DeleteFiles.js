@@ -1,7 +1,6 @@
 import fs, { unlink } from 'node:fs/promises'
 import { fileURLToPath } from 'url'
 import path from 'path'
-import { httpError } from '../../helpers/handleError.js'
 const __dirname = fileURLToPath(import.meta.url)
 
 export const deleteFiles = async (req, res) => {
@@ -20,6 +19,6 @@ export const deleteFiles = async (req, res) => {
     }
     return totalSize
   } catch (error) {
-    httpError(error, res)
+    return error
   }
 }
