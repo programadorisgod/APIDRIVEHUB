@@ -31,8 +31,7 @@ export default async function getFiles (req, res) {
       res.status(404).json({ error: 'user not found' })
       return
     }
-    const exit = await verifyFileExist(route)
-    if (!exit) {
+    if (!verifyFileExist(route)) {
       res.status(404).json({ error: 'file not found' })
       return
     }
@@ -64,14 +63,12 @@ export async function getMiniature (req, res) {
   const { fileName, Default } = req.params
   try {
     const route = path.join(__dirname, `../../../../unidad/${Default}/gallery`, fileName)
-    const exist = await verifyFileExist(route)
-
-    if (!exist) {
+    if (!verifyFileExist(route)) {
       res.status(404).json({ error: 'file not found' })
       return
     }
 
-    await res.sendFile(route)
+    res.sendFile(route)
   } catch (error) {
     httpError(error, res)
   }
