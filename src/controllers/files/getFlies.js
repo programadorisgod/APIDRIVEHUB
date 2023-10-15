@@ -59,7 +59,7 @@ export default async function getFiles (req, res) {
   }
 }
 
-export async function getMiniature (req, res) {
+export async function getMiniatures (req, res) {
   const { fileName, Default } = req.params
   try {
     const route = path.join(__dirname, `../../../../unidad/${Default}/gallery`, fileName)
