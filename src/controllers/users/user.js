@@ -190,8 +190,7 @@ export const updateDirectories = async (req, res) => {
     const year = new Date().getFullYear()
     const month = new Date().getMonth() + 1
     const day = new Date().getDate()
-    const hour = new Date().toLocaleTimeString('es-CO', { hour12: false })
-    const date = `${year}-${month}-${day}-${hour}`.toString()
+    const date = `${year}-${month}-${day}`.toString()
     let space = 0
 
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
