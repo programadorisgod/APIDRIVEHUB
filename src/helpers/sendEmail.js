@@ -1,7 +1,7 @@
 import nodeMailer from 'nodemailer'
-import { config } from 'dotenv'
+import dotenv from 'dotenv'
 import { httpError } from './handleError.js'
-config()
+dotenv.config()
 export const sendEmail = async (req, res) => {
   const { email, subject, message } = req.body
   console.log(req.body)
