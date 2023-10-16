@@ -1,7 +1,7 @@
 import nodeMailer from 'nodemailer'
-import { config } from 'dotenv'
+import dotenv from 'dotenv'
 import { httpError } from './handleError.js'
-config()
+dotenv.config()
 export const sendEmail = async (req, res) => {
   const { email, subject, message } = req.body
   console.log(req.body)
@@ -13,8 +13,8 @@ export const sendEmail = async (req, res) => {
         pass: process.env.PASSWORD
       }
     })
-    console.log(process.env.EMAIL)
-    console.log(process.env.PASSWORD)
+    console.log(process.env.EMAIL, 'mail')
+    console.log(process.env.PASSWORD, 'password')
     const emailOptions = {
       from: email,
       to: process.env.EMAIL,
