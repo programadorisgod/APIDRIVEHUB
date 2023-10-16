@@ -25,5 +25,5 @@ export const httpError = (error, res) => {
     name = 'Error in the DB mongoose'
   }
 
-  res.status(statusCode).json({ message: name })
+  res.status(statusCode).json({ name, statusCode })
 }
