@@ -13,8 +13,8 @@ export const sendEmail = async (req, res) => {
         pass: process.env.PASSWORD
       }
     })
-    console.log(process.env.EMAIL)
-    console.log(process.env.PASSWORD)
+    console.log(process.env.EMAIL, 'mail')
+    console.log(process.env.PASSWORD, 'password')
     const emailOptions = {
       from: email,
       to: process.env.EMAIL,
