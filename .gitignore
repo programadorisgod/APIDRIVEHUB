@@ -1,5 +1,4 @@
 node_modules
 .env
-.env.example
 test
 jest.config.js
