@@ -26,6 +26,7 @@ const encryptIdentifier = async (req, res) => {
     const idQR = await GenerateQR(link)
     const route = path.join(__dirname, `../../../QR/${idQR}.png`)
     const qrImage = await fs.readFile(route, { encoding: 'base64' })
+    console.log(qrImage)
 
     const response = {
       link,
