@@ -14,6 +14,6 @@ export default async function GenerateQR (link) {
     QRCode.toFile(route, link)
     return id
   } catch (error) {
-    console.log(error)
+    console.log(error, 'error')
   }
 }

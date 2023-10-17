@@ -24,7 +24,9 @@ const encryptIdentifier = async (req, res) => {
 
     const link = `${process.env.HOST}/api/files/open-file?file=${encodeURIComponent(encrypted)}&Directory=${Directory}&signature=${encodeURIComponent(hash)}`
     const idQR = await GenerateQR(link)
+    console.log(idQR, 'idQR')
     const route = path.join(__dirname, `../../../QR/${idQR}.png`)
+    console.log(route, 'route')
     const qrImage = await fs.readFile(route, { encoding: 'base64' })
     console.log(qrImage)
 
