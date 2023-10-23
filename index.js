@@ -11,7 +11,7 @@ import swaggerDocs from './src/routes/swagger.js'
 import emailRouter from './src/routes/Email/sendMail.js'
 dotenv.config()
 const app = express()
-const PORT = process.env.PORT || 4000
+const PORT = process.env.PORT ?? 4000
 
 app.use(cors())
 app.use(express.json())

@@ -1,5 +1,4 @@
 import path from 'path'
-import { fileURLToPath } from 'url'
 import verifyFileExist from '../../helpers/verifyFile.js'
 import { httpError } from '../../helpers/handleError.js'
 import { descryptIdentifier } from '../../helpers/encrypt.js'
@@ -7,7 +6,6 @@ import verifyFileExistLink from '../../helpers/findFile.js'
 import fs from 'fs'
 import UserModel from '../../models /user.js'
 import Throttle from 'throttle'
-const __dirname = fileURLToPath(import.meta.url)
 /**
  * This function retrieves a file from a specified directory and sends it as a response, while handling
  * errors.
@@ -23,36 +21,35 @@ const __dirname = fileURLToPath(import.meta.url)
  */
 export default async function getFiles (req, res) {
   const { fileName, directory, userName } = req.params
-
   try {
-    const route = path.join(__dirname, `../../../../unidad/${directory}`, fileName)
+    const route = path.join(process.cwd(), `/unidad/${directory}`, fileName)
     const user = await UserModel.findOne({ userName })
+
     if (!user) {
       res.status(404).json({ error: 'user not found' })
       return
     }
+
     if (!verifyFileExist(route)) {
       res.status(404).json({ error: 'file not found' })
       return
     }
 
-    res.setHeader('Content-Type', 'application/octet-stream')
-
     const fileStream = fs.createReadStream(route)
+    const stat = fs.statSync(route)
+    const fileSize = stat.size
+
+    res.setHeader('Content-Type', 'application/octet-stream')
+    res.header('Content-Length', fileSize)
+
     if (user.premium) {
-      const stat = fs.statSync(route)
-      const fileSize = stat.size
-      res.header('Content-Length', fileSize)
       const throttle = new Throttle(1024 * 1024 * 250)// 250MB/s
       fileStream.pipe(throttle).pipe(res)
       return
     }
 
-    const stat = fs.statSync(route)
-    const fileSize = stat.size
-    res.header('Content-Length', fileSize)
     const throttle = new Throttle(1024 * 1024 * 50)// 10MB/s
-    fileStream.pipe(throttle).pipe(res)
+    fileStream.pipe(throttle).pipe(res, { end: true })
   } catch (error) {
     console.log(error)
     httpError(error, res)
