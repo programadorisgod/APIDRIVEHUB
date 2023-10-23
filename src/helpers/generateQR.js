@@ -7,6 +7,8 @@ import crypto from 'node:crypto'
 const __dirname = fileURLToPath(import.meta.url)
 const id = crypto.randomUUID()
 const route = path.join(__dirname, `../../../QR/${id}.png`)
+console.log(__dirname, 'dirname')
+console.log(procces.cwd())
 // const routeFile = path.join(__dirname, '../../../QR/')
 export default async function GenerateQR (link) {
   try {
