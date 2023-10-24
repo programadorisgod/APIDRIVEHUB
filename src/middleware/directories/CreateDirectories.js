@@ -1,9 +1,8 @@
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { httpError } from '../../helpers/handleError.js'
+import { error } from 'node:console'
 /** Usamos el fileURLToPath para convertir la url en una ruta de archivo */
-const __dirname = fileURLToPath(import.meta.url)
 
 /**
  * This function creates a directory with a given name
@@ -39,7 +38,7 @@ export const createFile = async (req, res, next) => {
     if (Object.keys(req.body).length !== 0) {
       const { nameDirectory } = req.body
       /** unimos la ruta con el directorio en el que estemos, nos devolvemos y accedemos a la raiz  */
-      const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
+      const route = path.join(process.cwd(), `/unidad/${nameDirectory}`)
 
       await mkdir(route, { recursive: true })
       // pasamos a la siguiente peticion
@@ -47,17 +46,18 @@ export const createFile = async (req, res, next) => {
     }
     return next()
   } catch (error) {
+    console.log(error)
     httpError(error, res)
   }
 }
 
 export const createDirectory = async (nameDirectory) => {
   try {
-    const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
-    const routeMiniature = path.join(__dirname, `../../../../unidad/${nameDirectory}/gallery`)
+    const route = path.join(process.cwd(), `/unidad/${nameDirectory}`)
+    const routeMiniature = path.join(process.cwd(), `/unidad/${nameDirectory}/gallery`)
     await mkdir(route, { recursive: true })
     await mkdir(routeMiniature, { recursive: true })
   } catch (s) {
-
+    console.log(error)
   }
 }
