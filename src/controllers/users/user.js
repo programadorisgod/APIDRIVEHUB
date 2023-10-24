@@ -231,7 +231,6 @@ export const updateDirectories = async (req, res) => {
     res.status(200).json({ userFileUpdate })
   } catch (error) {
     console.log(error)
-
     httpError(error, res)
   }
 }
