@@ -59,7 +59,7 @@ export default async function getFiles (req, res) {
 export async function getMiniatures (req, res) {
   const { fileName, Default } = req.params
   try {
-    const route = path.join(__dirname, `../../../../unidad/${Default}/gallery`, fileName)
+    const route = path.join(process.cwd(), `/unidad/${Default}/gallery`, fileName)
     if (!verifyFileExist(route)) {
       res.status(404).json({ error: 'file not found' })
       return
