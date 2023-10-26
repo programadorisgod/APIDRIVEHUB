@@ -5,6 +5,7 @@ import { createDirectory } from '../../middleware/directories/CreateDirectories.
 import { deleteFile } from '../../middleware/directories/DeleteDirectory.js'
 import { deleteFiles } from '../../middleware/directories/DeleteFiles.js'
 import UserModel from '../../models /user.js'
+
 /**
  * This function get a user by id specified
  * @param {id} req
