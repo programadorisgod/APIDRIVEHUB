@@ -264,16 +264,17 @@ export const deleteDirectory = async (req, res, next) => {
       return
     }
 
-    await UserModel.updateOne({ userName }, { $pull: { directories: { nameDirectory: `${nameDirectory}` } } }, { new: true })
-
     size = await deleteFile(req, res)
+    userExist.space -= Number(size)
 
-    if (userExist.space !== 0) {
-      userExist.space -= size
+    if (userExist.space < 0) {
+      userExist.space = 0
     }
 
-    await userExist.save()
-    res.status(200).json({ userExist })
+    await UserModel.updateOne({ userName }, { $pull: { directories: { nameDirectory: `${nameDirectory}` } } }, { new: true })
+
+    const user = await UserModel.findOne({ userName })
+    res.status(200).json({ user })
 
     return next()
   } catch (error) {
@@ -333,15 +334,14 @@ export const deleteFileUser = async (req, res, next) => {
     }
     totalSize = Number(user.space) - Number(size)
 
-    if (user.space > 0) {
-      user.space = totalSize
-    }
+    user.space -= totalSize
 
     directory.files = filesToDelete
 
     await user.save()
+    const userFileDeletes = await UserModel.findOne({ userName })
 
-    res.status(200).json({ user })
+    res.status(200).json({ userFileDeletes })
   } catch (error) {
     console.log(error)
     httpError(error, res)
