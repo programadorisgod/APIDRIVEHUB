@@ -246,9 +246,12 @@ export const updateDirectories = async (req, res) => {
  */
 export const deleteDirectory = async (req, res, next) => {
   const { userName, nameDirectory } = req.params
+
   let size = 0
+
   try {
     const userExist = await UserModel.findOne({ userName })
+
     if (!userExist) {
       res.status(404).json({ error: 'User not found, id is malformed' })
       return
@@ -262,12 +265,16 @@ export const deleteDirectory = async (req, res, next) => {
     }
 
     await UserModel.updateOne({ userName }, { $pull: { directories: { nameDirectory: `${nameDirectory}` } } }, { new: true })
+
     size = await deleteFile(req, res)
+
     if (userExist.space !== 0) {
       userExist.space -= size
     }
+
     await userExist.save()
-    res.status(200).json({ message: 'Directory deleted correctly ' })
+    res.status(200).json({ userExist })
+
     return next()
   } catch (error) {
     httpError(error, res)
@@ -305,6 +312,7 @@ export const deleteFileUser = async (req, res, next) => {
     }
 
     const user = await UserModel.findOne({ userName })
+
     if (!user) {
       res.status(404).json({ error: 'User not found, id is malformed' })
       return
@@ -333,7 +341,7 @@ export const deleteFileUser = async (req, res, next) => {
 
     await user.save()
 
-    res.status(200).json({ message: 'files deleted correctly' })
+    res.status(200).json({ user })
   } catch (error) {
     console.log(error)
     httpError(error, res)
@@ -364,8 +372,10 @@ export const deleteUser = async (req, res) => {
 
 export const updateMember = async (req, res) => {
   const { userName } = req.params
+
   try {
     let premium
+
     const user = await UserModel.findOne({ userName })
 
     if (!user) {
@@ -376,6 +386,7 @@ export const updateMember = async (req, res) => {
     premium = !user.premium
 
     const userUpdatemembership = await UserModel.findOneAndUpdate({ userName }, { premium }, { new: true })
+
     if (!userUpdatemembership) {
       res.status(500).json({ error: 'could not update the membership' })
       return
