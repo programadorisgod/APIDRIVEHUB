@@ -5,6 +5,7 @@ import { createDirectory } from '../../middleware/directories/CreateDirectories.
 import { deleteFile } from '../../middleware/directories/DeleteDirectory.js'
 import { deleteFiles } from '../../middleware/directories/DeleteFiles.js'
 import UserModel from '../../models /user.js'
+
 /**
  * This function get a user by id specified
  * @param {id} req
@@ -15,14 +16,12 @@ export const getUser = async (req, res) => {
   const { id } = req.params
 
   try {
-    /** Buscamos al usuario por su nombre de usuario ya que es unico */
     const userExist = await UserModel.findById({ _id: id })
 
     if (!userExist || Object.keys(userExist).length === 0) {
       res.status(404).json({ error: 'id is malformed user not found ' })
       return
     }
-    /** reemplazamos el avatar con el host y la ruta */
     const user = {
       ...userExist._doc,
       avatar: `${process.env.HOST}/api/files/avatars/${userExist.avatar}`
@@ -52,6 +51,7 @@ export const createUser = async (req, res, next) => {
     const avatar = 'userDefault.png'
     const passwordHas = await encryptPassword(password)
     const nameDirectory = `Default${userName}`
+
     const userNew = {
       avatar,
       userName,
@@ -63,16 +63,19 @@ export const createUser = async (req, res, next) => {
           files: []
         }
       ]
-
     }
 
     createDirectory(nameDirectory)
+
     const userCreated = await UserModel.create(userNew)
+
     if (!userCreated) {
       res.status(500).json({ error: 'Could not create the user' })
       return
     }
+
     res.status(201).json({ userCreated })
+
     return next()
   } catch (error) {
     httpError(error, res)
@@ -102,6 +105,7 @@ export const UpdateUser = async (req, res) => {
     let passwordHas = user.password
 
     let avatar = user.avatar
+
     /** si se subio el archivo, accedemos a la primera pociosion del arreglo avatar y accedemos a la propiedad del nombre
      del archivo
      */
@@ -152,19 +156,25 @@ export const createDirectorie = async (req, res, next) => {
     }
 
     // verificar Si el directorio existe
-    const verifyDirectory = user.directories.find(dir => dir.nameDirectorio === nameDirectory)
+    const verifyDirectory = user.directories.find(dir => dir.nameDirectory === nameDirectory)
     if (verifyDirectory) {
       res.status(409).json({ error: 'No se pudo crear el directorio, porque ya existe uno con ese nombre' })
       return
     }
 
     /** usamos el metodo addToset para agregar al arreglo y aplanarlo */
-    const userCreatedDirectory = await UserModel.findOneAndUpdate(user._id,
-      { $addToSet: { directories: { nameDirectory } } },
+    const userCreatedDirectory = await UserModel.findOneAndUpdate(
+      user._id,
+      {
+        $addToSet: {
+          directories: { nameDirectory }
+        }
+      },
       { new: true }
     )
 
     res.status(200).json(userCreatedDirectory)
+
     return next()
   } catch (error) {
     httpError(error, res)
@@ -189,7 +199,12 @@ export const updateDirectories = async (req, res) => {
     const file = []
     const year = new Date().getFullYear()
     const month = new Date().getMonth() + 1
-    const day = new Date().getDate()
+    let day = new Date().getDate().toString()
+
+    if (day.length === 1) {
+      day = `0${day}`
+    }
+
     const date = `${year}-${month}-${day}`.toString()
     let space = 0
 

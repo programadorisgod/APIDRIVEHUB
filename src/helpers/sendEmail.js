@@ -1,6 +1,5 @@
 import nodeMailer from 'nodemailer'
-import { config } from 'dotenv'
-config()
+
 export const sendEmail = async (req, res) => {
   const { email, subject, message } = req.body
   try {

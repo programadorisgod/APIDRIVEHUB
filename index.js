@@ -1,15 +1,15 @@
 import express, { urlencoded } from 'express'
-import dotenv from 'dotenv'
 import cors from 'cors'
 // eslint-disable-next-line no-unused-vars
 import colors from 'colors'
+
 import connectDB from './config/conectDatabase.js'
 import routerUser from './src/routes/users/user.js'
 import routerAuth from './src/routes/auth/login.js'
 import routerFile from './src/routes/file/getFile.js'
 import swaggerDocs from './src/routes/swagger.js'
 import emailRouter from './src/routes/Email/sendMail.js'
-dotenv.config()
+
 const app = express()
 const PORT = process.env.PORT ?? 4000
 
