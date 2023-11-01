@@ -1,10 +1,8 @@
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
-import { config } from 'dotenv'
 import { fileURLToPath } from 'node:url'
 import path from 'path'
 const __dirname = fileURLToPath(import.meta.url)
-config()
 
 // Metadata info about oui API
 const swggerDocumentOptions = {

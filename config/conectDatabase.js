@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
-import dotenv from 'dotenv'
-dotenv.config()
+
 const conexionString = process.env.NODE_ENV === 'test' ? process.env.stringConexionTest : process.env.stringConexion
 
 const connectDB = async () => {
