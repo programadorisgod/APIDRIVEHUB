@@ -38,7 +38,7 @@ export const createFile = async (req, res, next) => {
     if (Object.keys(req.body).length !== 0) {
       const { nameDirectory } = req.body
       /** unimos la ruta con el directorio en el que estemos, nos devolvemos y accedemos a la raiz  */
-      const route = path.join(process.cwd(), `/unidad/${nameDirectory}`)
+      const route = path.join(process.cwd(), `/unidad/${nameDirectory.trim()}`)
 
       await mkdir(route, { recursive: true })
       // pasamos a la siguiente peticion
@@ -53,8 +53,8 @@ export const createFile = async (req, res, next) => {
 
 export const createDirectory = async (nameDirectory) => {
   try {
-    const route = path.join(process.cwd(), `/unidad/${nameDirectory}`)
-    const routeMiniature = path.join(process.cwd(), `/unidad/${nameDirectory}/gallery`)
+    const route = path.join(process.cwd(), `/unidad/${nameDirectory.trim()}`)
+    const routeMiniature = path.join(process.cwd(), `/unidad/${nameDirectory.trim()}/gallery`)
     await mkdir(route, { recursive: true })
     await mkdir(routeMiniature, { recursive: true })
   } catch (s) {
