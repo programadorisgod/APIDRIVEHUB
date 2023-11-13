@@ -17,7 +17,7 @@ const encryptIdentifier = async (req, res) => {
     encrypted += cipher.final('hex')
 
     const hash = createHash(encrypted)
-    const link = `${process.env.HOST}/api/files/open-file?file=${encodeURIComponent(encrypted)}&Directory=${Directory.trim()}&signature=${encodeURIComponent(hash)}`
+    const link = `${process.env.HOST}/api/files/open-file?file=${encodeURIComponent(encrypted)}&Directory=${Directory}&signature=${encodeURIComponent(hash)}`
     const idQR = await GenerateQR(link)
     const route = path.join(process.cwd(), '/QR', `${idQR}`)
 
