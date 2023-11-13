@@ -17,6 +17,7 @@ const app = express()
 const PORT = process.env.PORT ?? 4000
 const numCPUs = os.availableParallelism()
 let Server
+
 if (cluster.isPrimary) {
   console.log(`Primary ${process.pid} is running`)
   // Fork workers.
