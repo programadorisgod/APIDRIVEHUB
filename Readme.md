@@ -39,7 +39,7 @@ npm install
 
 ## Documentación
 
-La documentación completa de la API DriveHub está disponible en [este enlace](https://drivehub-api-docs.com). Aquí encontrarás detalles sobre los diferentes endpoints, los parámetros necesarios, las respuestas esperadas y ejemplos de uso. Te recomendamos revisar la documentación antes de comenzar a utilizar la API.
+La documentación completa de la API DriveHub está disponible en [este enlace]([https://drivehub-api-docs.com](https://api-drivehub-production.up.railway.app/api-docs/)). Aquí encontrarás detalles sobre los diferentes endpoints, los parámetros necesarios, las respuestas esperadas y ejemplos de uso. Te recomendamos revisar la documentación antes de comenzar a utilizar la API.
 
 ## Ejemplos de uso
 
@@ -88,12 +88,4 @@ Estos son solo ejemplos básicos, y hay muchas más operaciones y opciones dispo
 
 Si deseas contribuir al desarrollo de la API DriveHub, ¡eres bienvenido! Puedes abrir un issue en GitHub para informar sobre problemas o sugerencias, o enviar un pull request con tus mejoras propuestas.
 
-## Contacto
-
-Si tienes alguna pregunta o consulta sobre la API DriveHub, no dudes en contactarnos a través de [support@drivehub-api.com](mailto:support@drivehub-api.com).
-
 ¡Gracias por utilizar la API DriveHub! Esperamos que esta herramienta sea útil para tus necesidades de gestión de archivos y directorios en tu unidad virtual.
-
-```sh
-
-```
