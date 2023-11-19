@@ -349,7 +349,7 @@ export const deleteFileUser = async (req, res, next) => {
     }
     totalSize = Number(user.space) - Number(size)
 
-    user.space -= totalSize
+    user.space = totalSize
 
     directory.files = filesToDelete
 
