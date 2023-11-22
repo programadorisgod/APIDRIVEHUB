@@ -15,8 +15,10 @@ const app = express()
 const PORT = process.env.PORT ?? 4000
 
 app.use(cors())
+
 app.use(express.json())
 app.use(urlencoded({ extended: true }))
+
 app.use(morgan('dev'))
 app.get('/', (req, res) => {
   res.json({ msg: 'Welcome to DRIVEHUB' })
