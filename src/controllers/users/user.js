@@ -50,11 +50,11 @@ export const createUser = async (req, res, next) => {
   try {
     const avatar = 'userDefault.png'
     const passwordHas = await encryptPassword(password)
-    const nameDirectory = `Default${userName}`
+    const nameDirectory = `Default${userName.trim()}`
 
     const userNew = {
       avatar,
-      userName,
+      userName: userName.trim(),
       password: passwordHas,
       email,
       directories: [
