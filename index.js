@@ -31,7 +31,7 @@ app.use(emailRouter)
 connectDB()
 
 const Server = app.listen(PORT, () => {
-  console.log(`Server running in the port: ${PORT}`.bold)
+  console.log(`Server running in the port : ${PORT}`.bold)
   swaggerDocs(app, PORT)
 })
 
