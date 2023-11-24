@@ -17,7 +17,6 @@ export const verifySpace = (req, res, next) => {
     }
     return next()
   } catch (error) {
-    console.log(error)
     httpError(error, res)
   }
 }

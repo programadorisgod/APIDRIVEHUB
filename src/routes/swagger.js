@@ -32,7 +32,7 @@ const swaggerDocs = (app, port) => {
     res.setHeader('Content-Type', 'application/json')
     res.send(swaggerDocument)
   })
-  console.log('[Documentation] Swagger docs running on http://localhost:4000/api-docs'.yellow.bold)
+  console.log('[Documentation] Swagger docs running on https://api-drivehub-production.up.railway.app/api-docs'.yellow.bold)
 }
 
 export default swaggerDocs

@@ -51,7 +51,6 @@ export default async function getFiles (req, res) {
     const throttle = new Throttle(1024 * 1024 * 50)// 10MB/s
     fileStream.pipe(throttle).pipe(res, { end: true })
   } catch (error) {
-    console.log(error)
     httpError(error, res)
   }
 }
@@ -84,7 +83,6 @@ export async function getFilebyLink (req, res) {
 
     res.sendFile(fileExist)
   } catch (error) {
-    console.log(error)
     httpError(error, res)
   }
 }

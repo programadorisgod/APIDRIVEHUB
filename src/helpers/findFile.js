@@ -18,7 +18,6 @@ export default async function verifyFileExistLink (nameFile, Directory) {
       }
       if (stats.isDirectory()) {
         const result = verifyFileExistLink(nameFile, Directory)
-        console.log(result)
         if (result) {
           return result
         }
