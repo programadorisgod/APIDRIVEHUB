@@ -1,1 +1,7 @@
 node_modules
+Readme.md
+.vscode/
+.env
+.env.*
+Dockerfile
+Dockerfile-*
