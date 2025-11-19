@@ -21,14 +21,14 @@ export const ValidateData = async (req, res, next) => {
   try {
     if (Object.keys(req.body).length !== 0) {
       const { password, userName, email } = req.body
-      const userNameExist = await verifyUserName(userName)
+      const userNameExists = await verifyUserName(userName)
 
-      if (userNameExist) {
+      if (userNameExists) {
         res.status(400).json({ erro: 'Username is already in use ' })
         return
       }
 
-      const passwordError = await verifyPassword(password)
+      const passwordError = verifyPassword(password)
       if (passwordError) {
         res.status(400).json({ error: 'the password is minor a 8 digits ' })
         return
@@ -40,12 +40,12 @@ export const ValidateData = async (req, res, next) => {
       }
 
       const emailError = await verifyEmail(email)
-      if (emailError === 'Email invalid') {
-        res.status(400).json({ error: 'Email invalid' })
+      if (emailError === 'invalid email') {
+        res.status(400).json({ error: 'invalid email' })
         return
       }
       if (emailError) {
-        res.status(400).json({ error: 'Email is already in use ' })
+        res.status(400).json({ error: 'Email is already in use' })
         return
       }
 
@@ -53,6 +53,6 @@ export const ValidateData = async (req, res, next) => {
     }
     return next()
   } catch (error) {
-    res.status(500).json({ error: 'an internal error ocurred in the server ' })
+    res.status(500).json({ error: 'an internal error ocurred in the server' })
   }
 }

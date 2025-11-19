@@ -18,10 +18,10 @@ const __dirname = fileURLToPath(import.meta.url)
  * using `res.sendFile(route)`.
  */
 export default function getAvatars (req, res) {
-  const { fileName } = req.params
+  const { filename } = req.params
 
   try {
-    const route = path.join(__dirname, '../../../../uploads/', fileName)
+    const route = path.join(__dirname, '../../../../uploads/', filename)
 
     if (!verifyFileExist(route)) {
       res.status(404).json({ error: 'file not found' })

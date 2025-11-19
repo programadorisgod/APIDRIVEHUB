@@ -14,14 +14,14 @@ const iv = Buffer.from("0f1e2d3c4b5a69788796a5b4c3d2e1f0", "hex");
 const encryptIdentifier = async (req, res) => {
   try {
     const { identifier } = req.query;
-    const { Directory } = req.query;
+    const { dir } = req.query;
 
     const cipher = crypto.createCipheriv(algoritm, key, iv);
     let encrypted = cipher.update(identifier, "utf8", "hex");
     encrypted += cipher.final("hex");
 
     const hash = createHash(encrypted);
-    const link = `${settings.HOST}/api/files/open-file?file=${encodeURIComponent(encrypted)}&Directory=${Directory}&signature=${encodeURIComponent(hash)}`;
+    const link = `${settings.HOST}/api/files/open-file?file=${encodeURIComponent(encrypted)}&dir=${dir}&signature=${encodeURIComponent(hash)}`;
     const idQR = await GenerateQR(link);
     const route = path.join(process.cwd(), "/QR", `${idQR}`);
 

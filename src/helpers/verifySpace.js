@@ -2,10 +2,10 @@ import UserModel from '../models /user.js'
 import { httpError } from './handleError.js'
 
 export const verifySpace = (req, res, next) => {
-  const { userName } = req.params
+  const { username } = req.params
 
   try {
-    const user = UserModel.findOne({ userName })
+    const user = UserModel.findOne({ username })
     if (!user) {
       res.status(404).json({ error: 'user not found' })
       return

@@ -7,14 +7,14 @@ import { checkAuth } from '../../middleware/auth/auth.js'
 
 const routerFile = Router()
 
-const path = '/api/files'
+const PREFIX = '/api/files'
 
-routerFile.get(`${path}/unidad/:userName/:directory/:fileName`, getFiles)
+routerFile.get(`${PREFIX}/unidad/:username/:dir/:filename`, getFiles)
 
-routerFile.get(`${path}/unidad/:Default/:fileName`, getMiniatures)
-routerFile.get(`${path}/avatars/:fileName`, getAvatars)
-routerFile.get(`${path}/getlink`, checkAuth, encryptIdentifier)
-routerFile.get(`${path}/open-file`, getFilebyLink)
-routerFile.get(`${path}/convert/:Directory/:fileName/:ext`, checkAuth, convertFile)
+routerFile.get(`${PREFIX}/unidad/:dir/:filename`, getMiniatures)
+routerFile.get(`${PREFIX}/avatars/:filename`, getAvatars)
+routerFile.get(`${PREFIX}/getlink`, checkAuth, encryptIdentifier)
+routerFile.get(`${PREFIX}/open-file`, getFilebyLink)
+routerFile.get(`${PREFIX}/convert/:dir/:filename/:ext`, checkAuth, convertFile)
 
 export default routerFile
