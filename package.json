@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "cross-env NODE_ENV=developent node --watch --env-file=.env index.js",
+    "dev": "cross-env NODE_ENV=development node --watch --env-file=.env index.js",
     "start": "cross-env NODE_ENV=production node --watch --env-file=.env index.js",
     "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --verbose  --forceExit",
     "test:watch": "npm run test --watch",
@@ -35,7 +35,8 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "throttle": "^1.0.3",
-    "xoauth2": "^1.2.0"
+    "xoauth2": "^1.2.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "autocannon": "^7.12.0",
@@ -45,11 +46,5 @@
     "morgan": "^1.10.0",
     "npm": "^10.2.3",
     "supertest": "^6.3.3"
-  },
-  "eslintConfig": {
-    "extends": "./node_modules/standard/eslintrc.json",
-    "env": {
-      "jest": true
-    }
   }
 }

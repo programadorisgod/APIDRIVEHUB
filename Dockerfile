@@ -1,10 +1,13 @@
-FROM node:20.9.0
+FROM node:20.9.0-alpine
 
 WORKDIR /DriveHub
 
-COPY . .
+COPY package.json .
+COPY package-lock.json .
 
 RUN  npm install
+
+COPY . /DriveHub 
 
 EXPOSE 4000
 

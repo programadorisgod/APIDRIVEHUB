@@ -20,7 +20,7 @@ const UserSchema = new Schema({
     minlength: 8
   },
   directories: [{
-    nameDirectory: { type: String },
+    directoryName: { type: String },
     files: [{
       nameFile: { type: String },
       Date: { type: String },

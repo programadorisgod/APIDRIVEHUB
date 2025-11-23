@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken'
+import { settings } from '../config/env/varaibles.js'
 
 export const generateToken = (user) => {
-  return jwt.sign({ id: user._id }, process.env.secretKey)
+  return jwt.sign({ id: user._id }, settings.SECRET_KEY)
 }
 
-export const validateToken = async (token) => {
-  return await jwt.verify(token, process.env.secretKey)
+export const validateToken =  (token) => {
+  return  jwt.verify(token, settings.SECRET_KEY)
 }

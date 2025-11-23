@@ -20,10 +20,10 @@ import Throttle from 'throttle'
  * a 500 error response with a JSON object containing an error message.
  */
 export default async function getFiles (req, res) {
-  const { fileName, directory, userName } = req.params
+  const { filename, dir, username } = req.params
   try {
-    const route = path.join(process.cwd(), `/unidad/${directory}`, fileName)
-    const user = await UserModel.findOne({ userName })
+    const route = path.join(process.cwd(), `/unidad/${dir}`, filename)
+    const user = await UserModel.findOne({ userName:username })
 
     if (!user) {
       res.status(404).json({ error: 'user not found' })
@@ -51,15 +51,14 @@ export default async function getFiles (req, res) {
     const throttle = new Throttle(1024 * 1024 * 50)// 10MB/s
     fileStream.pipe(throttle).pipe(res, { end: true })
   } catch (error) {
-    console.log(error)
     httpError(error, res)
   }
 }
 
 export async function getMiniatures (req, res) {
-  const { fileName, Default } = req.params
+  const { filename, dir } = req.params
   try {
-    const route = path.join(process.cwd(), `/unidad/${Default}/gallery`, fileName)
+    const route = path.join(process.cwd(), `/unidad/${dir}/gallery`, filename)
     if (!verifyFileExist(route)) {
       res.status(404).json({ error: 'file not found' })
       return
@@ -73,18 +72,18 @@ export async function getMiniatures (req, res) {
 
 export async function getFilebyLink (req, res) {
   const { file } = req.query
-  const { Directory } = req.query
-  const nameFile = descryptIdentifier(file)
+  const { dir } = req.query
+  const decodedFilename = descryptIdentifier(file)
+  console.log(dir)
+  console.log(decodedFilename, ' decoded filename')
   try {
-    const fileExist = await verifyFileExistLink(nameFile, Directory)
-    if (!fileExist) {
+    const existingFile = await verifyFileExistLink(decodedFilename, dir)
+    if (!existingFile) {
       res.status(404).json({ error: 'file not found' })
       return
     }
-
-    res.sendFile(fileExist)
+    res.sendFile(existingFile)
   } catch (error) {
-    console.log(error)
     httpError(error, res)
   }
 }

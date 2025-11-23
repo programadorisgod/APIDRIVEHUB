@@ -13,8 +13,9 @@ the filename to be the original name of the uploaded file. */
 const storage = multer.diskStorage({
 
   destination: function (req, file, cb) {
-    const { nameDirectory } = req.params
-    const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
+    const { dir, folder } = req.params
+
+    const route = dir && folder ?path.join(__dirname, `../../../../unidad/${dir}/${folder}`)  :  path.join(__dirname, `../../../../unidad/${dir}`)
     cb(null, route)
   },
   filename: function (req, file, cb) {
@@ -22,10 +23,31 @@ const storage = multer.diskStorage({
   }
 })
 
-function checkFileType (req, file, cb) {
-  file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf-8')
-  cb(null, true)
+function fixEncoding(str) {
+  // Si contiene �, es señal de mal UTF-8
+  if (str.includes('�')) {
+    return Buffer.from(str, 'binary').toString('utf-8');
+  }
+  return str;
 }
+
+function checkFileType(req, file, cb) {
+  let name = file.originalname;
+
+  // 1. Reparar UTF-8 corrupto
+  name = fixEncoding(name);
+
+  name = name.normalize("NFC");
+
+  // 3. Sanitizar caracteres ilegales
+  name = name.replace(/[\/\\\<\>\:\*\?\"\|]/g, "_");
+
+  console.log("Sanitized filename:", name);
+
+  file.originalname = name;
+  cb(null, true);
+}
+
 
 /* This code is defining a middleware function called `uploadFile` that uses the `multer` library to
 handle file uploads. The `multer` middleware is configured with a `storage` object that specifies
@@ -37,7 +59,7 @@ const upload = multer({ storage, fileFilter: checkFileType }).fields([{ name: 'g
 export const uploadFile = (req, res, next) => {
   upload(req, res, (error) => {
     if (error) {
-      console.log(error)
+      console.log('erro')
       res.status(400).json({ error: error.message })
       return
     }

@@ -1,3 +1,4 @@
+import { UserDto } from '../../dtos/auth/user.js'
 import { comparePassword } from '../../helpers/handleBcrypt.js'
 import { httpError } from '../../helpers/handleError.js'
 import { generateToken } from '../../helpers/handleJwt.js'
@@ -20,21 +21,26 @@ export const Login = async (req, res) => {
   const { password, email } = req.body
 
   try {
-    const userEmailCorrect = await UserModel.findOne({ email })
+    const existingUser = await UserModel.findOne({ email })
 
-    if (!userEmailCorrect) {
+    if (!existingUser) {
       res.status(409).json({ error: 'Credentials invalid' })
       return
     }
-    const passwordCorrect = await comparePassword(password, userEmailCorrect.password)
+    const passwordCorrect = await comparePassword(password, existingUser.password)
 
     if (!passwordCorrect) {
       res.status(409).json({ error: 'Credentials invalid' })
       return
     }
-    const token = generateToken(userEmailCorrect)
-    res.status(200).json({ userEmailCorrect, token })
+    const token = generateToken(existingUser)
+
+    const dto = new UserDto(existingUser)
+
+    res.status(200).json({ user: dto, token })
+
   } catch (error) {
+    console.log(error)
     httpError(error, res)
   }
 }

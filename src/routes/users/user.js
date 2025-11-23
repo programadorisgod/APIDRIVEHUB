@@ -1,9 +1,8 @@
 import { Router } from 'express'
-import { UpdateUser, createDirectorie, createUser, deleteDirectory, deleteFileUser, deleteUser, getUser, updateDirectories, updateMember } from '../../controllers/users/user.js'
+import { UpdateUser, createFolder, createUser, deleteDirectory, deleteFileUser, deleteUser, getUser, updateDirectories, updateMember } from '../../controllers/users/user.js'
 import { ValidateData } from '../../validators/validatorUser.js'
 import { checkAuth } from '../../middleware/auth/auth.js'
 import { uploadFile } from '../../middleware/multer/upload.js'
-import { createFile } from '../../middleware/directories/CreateDirectories.js'
 import { uploadAvatar } from '../../middleware/multer/uploadAvatar.js'
 import { verifySpace } from '../../helpers/verifySpace.js'
 
@@ -170,7 +169,7 @@ routerUser.get(`${path}/:id`, checkAuth, getUser)
  *                   type: string
  *                   example: Internal Server Error
  */
-routerUser.post(`${path}/create`, ValidateData, createUser)
+routerUser.post(`${path}/`, ValidateData, createUser)
 /**
  * @swagger
  * /api/users/update/{id}:
@@ -259,7 +258,7 @@ routerUser.post(`${path}/create`, ValidateData, createUser)
  *                   type: string
  *                   example: Internal Server Error
  */
-routerUser.put(`${path}/update/:id`, checkAuth, ValidateData, uploadAvatar, UpdateUser)
+routerUser.put(`${path}/:id`, checkAuth, ValidateData, uploadAvatar, UpdateUser)
 /**
  * @swagger
  * /path/createDirectory/{userName}:
@@ -294,7 +293,7 @@ routerUser.put(`${path}/update/:id`, checkAuth, ValidateData, uploadAvatar, Upda
  *       500:
  *         description: Error interno del servidor.
  */
-routerUser.put(`${path}/createDirectory/:userName`, checkAuth, createDirectorie, createFile)
+routerUser.put(`${path}/:username/create/directory/:dir/files`, checkAuth, createFolder)
 /**
  * @swagger
  * /api/users/addFields/{userName}/{nameDirectory}:
@@ -396,8 +395,9 @@ routerUser.put(`${path}/createDirectory/:userName`, checkAuth, createDirectorie,
  *                   type: string
  *                   example: Internal Server Error
  */
-routerUser.put(`${path}/addFields/:userName/:nameDirectory/:Default`, checkAuth, verifySpace, uploadFile, updateDirectories)
-routerUser.put(`${path}/updateMembership/:userName`, checkAuth, updateMember)
+routerUser.put(`${path}/:username/directories/:dir/files/:folder`, checkAuth, verifySpace, uploadFile, updateDirectories)
+
+routerUser.put(`${path}/membership/:username`, checkAuth, updateMember)
 /**
  * @swagger
  * /api/users/deleteDirectory/{userName}/{nameDirectory}:
@@ -465,7 +465,7 @@ routerUser.put(`${path}/updateMembership/:userName`, checkAuth, updateMember)
  *                   type: string
  *                   example: 'Internal Server Error'
  */
-routerUser.delete(`${path}/deleteDirectory/:userName/:nameDirectory`, checkAuth, deleteDirectory)
+routerUser.delete(`${path}/directory/:username/:dir`, checkAuth, deleteDirectory)
 /**
  * @swagger
  * /api/users/deleteFiles/{userName}/{nameDirectory}:
@@ -533,7 +533,7 @@ routerUser.delete(`${path}/deleteDirectory/:userName/:nameDirectory`, checkAuth,
  *                   type: string
  *                   example: 'Internal Server Error'
  */
-routerUser.delete(`${path}/deleteFiles/:userName/:nameDirectory`, checkAuth, deleteFileUser)
+routerUser.delete(`${path}/files/:username/:dir`, checkAuth, deleteFileUser)
 
 /**
  * @swagger
@@ -595,6 +595,6 @@ routerUser.delete(`${path}/deleteFiles/:userName/:nameDirectory`, checkAuth, del
  *                   type: string
  *                   example: 'Internal Server Error'
  */
-routerUser.delete(`${path}/delete/:userName`, checkAuth, deleteUser)
+routerUser.delete(`${path}/:username`, checkAuth, deleteUser)
 
 export default routerUser

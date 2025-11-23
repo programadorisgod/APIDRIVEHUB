@@ -4,8 +4,8 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = fileURLToPath(import.meta.url)
 
-export default async function verifyFileExistLink (nameFile, Directory) {
-  const route = path.join(__dirname, `../../../unidad/${Directory}`)
+export default async function verifyFileExistLink (nameFile, dir) {
+  const route = path.join(__dirname, `../../../unidad/${dir}`)
   const filesInDirectory = await fs.readdir(path.dirname(route))
   try {
     // eslint-disable-next-line no-unused-vars
@@ -17,8 +17,7 @@ export default async function verifyFileExistLink (nameFile, Directory) {
         return routeFile
       }
       if (stats.isDirectory()) {
-        const result = verifyFileExistLink(nameFile, Directory)
-        console.log(result)
+        const result = verifyFileExistLink(nameFile, dir)
         if (result) {
           return result
         }
