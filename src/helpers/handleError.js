@@ -11,7 +11,7 @@ class myError extends Error {
 export const httpError = (error, res) => {
   let statusCode = 500
   let name = 'An internal error ocurred'
-
+  console.log(error)
   if (error instanceof myError) {
     statusCode = error.statusCode
     name = error.name

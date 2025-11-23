@@ -23,7 +23,7 @@ export default async function getFiles (req, res) {
   const { filename, dir, username } = req.params
   try {
     const route = path.join(process.cwd(), `/unidad/${dir}`, filename)
-    const user = await UserModel.findOne({ username })
+    const user = await UserModel.findOne({ userName:username })
 
     if (!user) {
       res.status(404).json({ error: 'user not found' })
@@ -71,9 +71,11 @@ export async function getMiniatures (req, res) {
 }
 
 export async function getFilebyLink (req, res) {
-  const { encryptedId } = req.query
+  const { file } = req.query
   const { dir } = req.query
-  const decodedFilename = descryptIdentifier(encryptedId)
+  const decodedFilename = descryptIdentifier(file)
+  console.log(dir)
+  console.log(decodedFilename, ' decoded filename')
   try {
     const existingFile = await verifyFileExistLink(decodedFilename, dir)
     if (!existingFile) {

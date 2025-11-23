@@ -6,10 +6,10 @@ import ffmpeg from 'fluent-ffmpeg'
 ffmpeg.setFfmpegPath(ffmpegPath.path)
 
 const __dirname = fileURLToPath(import.meta.url)
-export default async function getMiniature (nameDirectory, Default, nameFile) {
+export default async function getMiniature (nameDirectory, nameFile) {
   try {
     const routeOriginal = path.join(__dirname, `../../../unidad/${nameDirectory}`, `${nameFile}`)
-    const routeMiniature = path.join(__dirname, `../../../unidad/${Default}/gallery/`)
+    const routeMiniature = path.join(__dirname, `../../../unidad/${nameDirectory}/gallery/`)
     const ext = nameFile.split('.').pop().toLowerCase()
 
     const typeDoc = {

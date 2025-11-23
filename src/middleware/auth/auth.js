@@ -8,7 +8,7 @@ export const checkAuth = async (req, res, next) => {
     if (authorization && authorization.toLowerCase().startsWith('bearer')) {
       token = authorization.split(' ').pop()
     }
-    const tokenData = await validateToken(token)
+    const tokenData =  validateToken(token)
 
     if (tokenData.id) {
       next()
