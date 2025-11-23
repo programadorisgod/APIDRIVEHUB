@@ -1,8 +1,9 @@
+import { console } from "node:inspector/promises";
 import { settings } from "../../config/env/varaibles.js";
 import getMiniature from "../../helpers/getMiniature.js";
 import { encryptPassword } from "../../helpers/handleBcrypt.js";
 import { httpError } from "../../helpers/handleError.js";
-import { createDirectory } from "../../middleware/directories/CreateDirectories.js";
+import { createDirectory, createPhysicalDir } from "../../middleware/directories/CreateDirectories.js";
 import { deleteFile } from "../../middleware/directories/DeleteDirectory.js";
 import { deleteFiles } from "../../middleware/directories/DeleteFiles.js";
 import UserModel from "../../models /user.js";
@@ -148,12 +149,17 @@ export const UpdateUser = async (req, res) => {
  * created, or an error message if there was an issue with the request or server. The `next()` function
  * is also being called, but it is not necessary since the function already returns a response.
  */
-export const createDirectorie = async (req, res, next) => {
-  const { username } = req.params;
+export const createFolder = async (req, res, next) => {
+  const { username, dir } = req.params;
   const { directoryName } = req.body;
 
+
+  if (!directoryName || directoryName.trim() === "") {
+    return res.status(400).json({ message: 'No directory name provided' })
+  }
+
   try {
-    const user = await UserModel.findOne({ username });
+    const user = await UserModel.findOne({ userName:username });
 
     if (!user) {
       res.status(404).json({ error: "User not found" });
@@ -169,8 +175,15 @@ export const createDirectorie = async (req, res, next) => {
         .status(409)
         .json({
           error:
-            "No se pudo crear el directorio, porque ya existe uno con ese nombre",
+          "The directory could not be created, because there is already one with that name",
         });
+      return;
+    }
+
+    const createdDirectory = await createPhysicalDir({dir,directoryName })
+
+    if (createdDirectory instanceof Error){
+      res.status(500).json({ error: "Could not create the directory" });
       return;
     }
 
@@ -179,14 +192,15 @@ export const createDirectorie = async (req, res, next) => {
       user._id,
       {
         $addToSet: {
-          directories: { nameDirectory },
+          directories: { directoryName },
         },
       },
       { new: true },
     );
 
 
-    return next();
+    res.status(201).json({ message: 'Directory created successfully', directories:updateUser.directories })
+    return
   } catch (error) {
     httpError(error, res);
   }
@@ -196,7 +210,7 @@ export const createDirectorie = async (req, res, next) => {
  * @param {Object} req - The request object
  * @param {Object} req.params - The request parameters
  * @param {String} req.params.userName - The username of the user.
- * @param {String} req.params.nameDirectory - The name of the directory.
+ * @param {String} req.params.directoryName - The name of the directory.
  * @param {String}res - The `res` parameter is the response object that will be sent back to the client with
  * the updated directories or an error message. It contains methods to set the HTTP status code,
  * headers, and body of the response.
@@ -204,7 +218,8 @@ export const createDirectorie = async (req, res, next) => {
  * successful, or an error message if there was an error.
  */
 export const updateDirectories = async (req, res) => {
-  const { username, dir, 'default-dir': defaultDir  } = req.params;
+  const { username, dir, folder  } = req.params;
+  console.log(dir)
 
   try {
     const file = [];
@@ -221,6 +236,7 @@ export const updateDirectories = async (req, res) => {
 
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
     if (req.files && req.files.gallery) {
+      console.log('entopr')
       req.files.gallery.forEach((element) => {
         file.push({
           nameFile: element.originalname,
@@ -228,12 +244,12 @@ export const updateDirectories = async (req, res) => {
           size: element.size,
         });
         space += element.size;
-        getMiniature(dir, defaultDir, element.originalname);
+        getMiniature(dir, element.originalname);
       });
     }
 
     const userFileUpdate = await UserModel.findOneAndUpdate(
-      { username },
+      { userName: username },
       /** agregamos los archivos aplanados y le decimos que los guarde en la direccion del directorio que encontró */
       {
         $addToSet: {
@@ -242,12 +258,16 @@ export const updateDirectories = async (req, res) => {
       },
       // le indicamos el directorio
       {
-        arrayFilters: [{ "dir.nameDirectory": dir }],
+        arrayFilters: [{ "dir.directoryName": folder }],
         new: true,
       },
-      // devolvemos al usuario actualizado
-      { new: true },
     );
+
+    if (!userFileUpdate) {
+      return res.status(404).json({ error: "User or directory not found", userFileUpdate });
+    }
+
+
 
     userFileUpdate.space += space;
     await userFileUpdate.save();
@@ -259,7 +279,7 @@ export const updateDirectories = async (req, res) => {
 
     res.status(200).json({ userFileUpdate });
   } catch (error) {
-    console.log(error);
+    console.log(error, 'error');
     httpError(error, res);
   }
 };
@@ -268,7 +288,7 @@ export const updateDirectories = async (req, res) => {
  * @param {Object} req - The request object
  * @param {Object} req.params - The request parameters
  * @param {String} req.params.userName - The username of the user
- * @param {String} req.params.nameDirectory - The name of the directory
+ * @param {String} req.params.directoryName - The name of the directory
  * @param {function} next - The next middleware function in the aplicacion
  * @param {String} res - The response object whit JSON
  * @returns This function returns a JSON response whit message directory deleted correctly
@@ -287,7 +307,7 @@ export const deleteDirectory = async (req, res, next) => {
     }
 
     const directories = userExist.directories.find(
-      (dir) => dir.nameDirectory === dir,
+      (dir) => dir.directoryName === dir,
     );
 
     if (!directories) {
@@ -304,7 +324,7 @@ export const deleteDirectory = async (req, res, next) => {
 
     await UserModel.updateOne(
       { username },
-      { $pull: { directories: { nameDirectory: `${dir}` } } },
+      { $pull: { directories: { directoryName: `${dir}` } } },
       { new: true },
     );
 
@@ -324,7 +344,7 @@ export const deleteDirectory = async (req, res, next) => {
  * @param {Object} req.params - The request params
  * @param {Object} req.body - The request body
  * @param {String} req.params.userName - Tge username of the User
- * @param {String} req.params.nameDirectory - Tge name of the Directory
+ * @param {String} req.params.directoryName - Tge name of the Directory
  * @param {Array} req.body - The array whit name of files to delete
  * @param res - The `res` parameter is the response object that will be sent back to the client with
  * the result of the HTTP request. It contains methods to set the status code, headers, and body of the
@@ -355,7 +375,7 @@ export const deleteFileUser = async (req, res, next) => {
     }
 
     const foundDirectory = user.directories.find(
-      (dir) => dir.nameDirectory === dir,
+      (dir) => dir.directoryName === dir,
     );
     if (!foundDirectory) {
       res.status(404).json({ error: "Directory not found, id is malformed" });
