@@ -185,7 +185,6 @@ export const createDirectorie = async (req, res, next) => {
       { new: true },
     );
 
-    res.status(200).json(updateUser);
 
     return next();
   } catch (error) {
