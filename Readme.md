@@ -106,7 +106,7 @@ Content-Type: application/json
 #### Crear un directorio
 
 ```http
-PUT http://localhost:4000/api/users/camidev/create/directory/Defaultcamidev
+POST http://localhost:4000/api/users/camidev/directories/Defaultcamidev
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -118,7 +118,7 @@ Content-Type: application/json
 **Parámetros**:
 
 - `username`: Nombre del usuario
-- `dir`: Directorio base (ej: Defaultcamidev) - es el directorio que se crea por defecto al registrarse
+- `baseDir`: Directorio base (ej: Defaultcamidev) - es el directorio que se crea por defecto al registrarse
 
 **Respuesta**:
 
@@ -157,7 +157,7 @@ Authorization: Bearer <token>
 #### Subir archivos
 
 ```http
-PUT http://localhost:4000/api/users/camidev/directories/Defaultcamidev/files/barcelona
+POST http://localhost:4000/api/users/camidev/directories/Defaultcamidev/folder/barcelona/files
 Authorization: Bearer <token>
 Content-Type: multipart/form-data
 
@@ -167,7 +167,7 @@ Archivo: [archivo_binario]
 **Parámetros**:
 
 - `username`: Nombre del usuario
-- `dir`: Directorio base (ej: Defaultcamidev)
+- `directory`: Directorio base (ej: Defaultcamidev)
 - `folder`: Subcarpeta donde guardar el archivo (ej: barcelona)
 
 **Datos del formulario**:

@@ -8,10 +8,14 @@ const __dirname = fileURLToPath(import.meta.url)
 
 export const deleteFile = async (req, res) => {
   const { nameDirectory } = req.params
+
   try {
     const route = path.join(__dirname, `../../../../unidad/${nameDirectory}`)
+
     const sizeDirectory = await getDirectorySize(route)
+
     await rm(route, { recursive: true })
+
     return sizeDirectory
   } catch (error) {
     httpError(error, res)

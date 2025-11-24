@@ -2,7 +2,7 @@ import { Router } from 'express'
 import getFiles, { getFilebyLink, getMiniatures } from '../../controllers/files/getFiles.js'
 import getAvatars from '../../controllers/files/getAvatars.js'
 import { encryptIdentifier } from '../../helpers/encrypt.js'
-import { convertFile } from '../../helpers/convert.js'
+import { convertFile } from '../../helpers/files/convert.js'
 import { checkAuth } from '../../middleware/auth/auth.js'
 
 const routerFile = Router()

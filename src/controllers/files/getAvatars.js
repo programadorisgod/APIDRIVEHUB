@@ -1,6 +1,6 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
-import verifyFileExist from '../../helpers/verifyFile.js'
+import verifyFileExist from '../../helpers/files/verifyFile.js'
 import { httpError } from '../../helpers/handleError.js'
 
 const __dirname = fileURLToPath(import.meta.url)
@@ -17,7 +17,7 @@ const __dirname = fileURLToPath(import.meta.url)
  * @returns The function is not returning anything explicitly, but it is sending a file as a response
  * using `res.sendFile(route)`.
  */
-export default function getAvatars (req, res) {
+export default function getAvatars(req, res) {
   const { filename } = req.params
 
   try {

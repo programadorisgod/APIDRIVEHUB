@@ -1,9 +1,19 @@
 import { Router } from 'express'
-import { UpdateUser, createFolder, createUser, deleteDirectory, deleteFileUser, deleteUser, getUser, updateDirectories, updateMember } from '../../controllers/users/user.js'
+import {
+  UpdateUser,
+  createFolder,
+  createUser,
+  deleteDirectory,
+  deleteFileUser,
+  deleteUser,
+  getUser,
+  uploadFileToDirectory,
+  updateMember,
+} from '../../controllers/users/user.js'
 import { ValidateData } from '../../validators/validatorUser.js'
 import { checkAuth } from '../../middleware/auth/auth.js'
 import { uploadFile } from '../../middleware/multer/upload.js'
-import { uploadAvatar } from '../../middleware/multer/uploadAvatar.js'
+import { uploadAvatar } from '../../middleware/multer/upload-avatar.js'
 import { verifySpace } from '../../helpers/verifySpace.js'
 
 const routerUser = Router()
@@ -293,7 +303,7 @@ routerUser.put(`${path}/:id`, checkAuth, ValidateData, uploadAvatar, UpdateUser)
  *       500:
  *         description: Error interno del servidor.
  */
-routerUser.put(`${path}/:username/create/directory/:dir/files`, checkAuth, createFolder)
+routerUser.post(`${path}/:username/directories/:baseDir`, checkAuth, createFolder)
 /**
  * @swagger
  * /api/users/addFields/{userName}/{nameDirectory}:
@@ -395,7 +405,13 @@ routerUser.put(`${path}/:username/create/directory/:dir/files`, checkAuth, creat
  *                   type: string
  *                   example: Internal Server Error
  */
-routerUser.put(`${path}/:username/directories/:dir/files/:folder`, checkAuth, verifySpace, uploadFile, updateDirectories)
+routerUser.post(
+  `${path}/:username/directories/:directory/folder/:folder/files`,
+  checkAuth,
+  verifySpace,
+  uploadFile,
+  uploadFileToDirectory
+)
 
 routerUser.put(`${path}/membership/:username`, checkAuth, updateMember)
 /**
