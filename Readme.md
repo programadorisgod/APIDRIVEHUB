@@ -80,6 +80,7 @@ Content-Type: application/json
 ```
 
 **Respuesta**:
+
 ```json
 {
   "userCreated": {
@@ -115,10 +116,12 @@ Content-Type: application/json
 ```
 
 **Parámetros**:
+
 - `username`: Nombre del usuario
 - `dir`: Directorio base (ej: Defaultcamidev) - es el directorio que se crea por defecto al registrarse
 
 **Respuesta**:
+
 ```json
 {
   "message": "Directory created successfully",
@@ -145,6 +148,7 @@ Authorization: Bearer <token>
 ```
 
 **Parámetros**:
+
 - `username`: Nombre del usuario
 - `dir`: Nombre del directorio a eliminar
 
@@ -161,14 +165,17 @@ Archivo: [archivo_binario]
 ```
 
 **Parámetros**:
+
 - `username`: Nombre del usuario
 - `dir`: Directorio base (ej: Defaultcamidev)
 - `folder`: Subcarpeta donde guardar el archivo (ej: barcelona)
 
 **Datos del formulario**:
+
 - `gallery`: Archivo a subir
 
 **Respuesta**:
+
 ```json
 {
   "userFileUpdate": {
@@ -200,6 +207,7 @@ GET http://localhost:4000/api/files/unidad/camidev/Defaultcamidev/Screenshot%202
 ```
 
 **Parámetros**:
+
 - `username`: Nombre del usuario
 - `dir`: Directorio base
 - `filename`: Nombre del archivo
@@ -217,10 +225,12 @@ Content-Type: application/json
 ```
 
 **Parámetros**:
+
 - `username`: Nombre del usuario
 - `dir`: Directorio del archivo
 
 **Body**:
+
 - `files`: Array con los nombres de los archivos a eliminar
 
 ### 4. Compartir Archivos
@@ -233,10 +243,12 @@ Authorization: Bearer <token>
 ```
 
 **Parámetros de query**:
+
 - `identifier`: Nombre del archivo a compartir
 - `dir`: Directorio base donde está el archivo
 
 **Respuesta**:
+
 ```json
 {
   "response": {
@@ -278,4 +290,3 @@ Cuando se crea un usuario, se genera automáticamente un directorio base con el 
 Ejemplo: Si el usuario es `camidev`, el directorio será `Defaultcamidev`
 
 Este directorio base puede contener subcarpetas para organizar los archivos de forma jerárquica.
-
