@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import libre from 'libreoffice-convert'
 import util from 'node:util'
 import fs from 'node:fs/promises'
+import { UPLOADS_PATH } from '../directories/paths'
 
 const __dirname = fileURLToPath(import.meta.url)
 const libreConvertAsync = util.promisify(libre.convert)
@@ -12,7 +13,7 @@ export const convertFile = async (req, res) => {
   try {
     const baseName = filename.split('.')[0]
 
-    const route = path.join(__dirname, `../../../unidad/${directory}`, filename)
+    const route = path.join(UPLOADS_PATH, `${directory}`, filename)
 
     const convertedFilePath = path.join(__dirname, `../../../converted/${baseName}.${ext}`)
 
