@@ -11,7 +11,7 @@ export default async function verifyFileExistLink(nameFile, dir) {
       const pathFile = path.join(route, file)
       const stats = await fs.stat(pathFile)
 
-      if (stats.isFile()) {
+      if (stats.isFile() && file == nameFile) {
         return pathFile
       }
 
