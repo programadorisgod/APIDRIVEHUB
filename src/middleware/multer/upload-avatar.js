@@ -1,17 +1,13 @@
 import multer from 'multer'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-const __dirname = fileURLToPath(import.meta.url)
-const route = path.join(__dirname, '../../../../uploads/')
+import { UPLOADS_PATH } from '../../helpers/directories/paths.js'
 
 const storage = multer.diskStorage({
-
   destination: function (req, file, cb) {
-    cb(null, route)
+    cb(null, UPLOADS_PATH)
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname)
-  }
+  },
 })
 
 const upload = multer({ storage }).single('avatar')
