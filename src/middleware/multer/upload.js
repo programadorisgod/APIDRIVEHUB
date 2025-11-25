@@ -1,8 +1,6 @@
 import multer from 'multer'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { UNIDAD_PATH } from '../../helpers/directories/paths.js'
-const __dirname = fileURLToPath(import.meta.url)
 
 /* This code is configuring the storage engine to be used by the multer middleware for handling file
 uploads. It specifies the destination directory where uploaded files will be stored and the filename
