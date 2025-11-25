@@ -1,9 +1,8 @@
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
-import { fileURLToPath } from 'node:url'
 import path from 'path'
 import { settings } from '../config/env/varaibles.js'
-const __dirname = fileURLToPath(import.meta.url)
+import { ROUTES_PATH } from '../helpers/directories/paths.js'
 
 const swggerDocumentOptions = {
   definition: {
@@ -19,7 +18,7 @@ const swggerDocumentOptions = {
       url: settings.HOST ?? 'http://localhost:4000',
     },
   ],
-  apis: [`${path.join(__dirname, '../../routes/users/*.js')}`, `${path.join(__dirname, '../../routes/auth/*.js')}`],
+  apis: [`${path.join(ROUTES_PATH, 'users/*.js')}`, `${path.join(ROUTES_PATH, '/auth/*.js')}`],
 }
 
 const swaggerDocument = swaggerJSDoc(swggerDocumentOptions)
@@ -31,9 +30,7 @@ const swaggerDocs = (app, port) => {
     res.setHeader('Content-Type', 'application/json')
     res.send(swaggerDocument)
   })
-  console.log(
-    '[Documentation] Swagger docs running on https://api-drivehub-production.up.railway.app/api-docs'.yellow.bold
-  )
+  console.log(`[Documentation] Swagger docs running on ${settings.HOST}/api-docs`.yellow.bold)
 }
 
 export default swaggerDocs
