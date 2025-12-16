@@ -3,13 +3,14 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import ffmpegPath from '@ffmpeg-installer/ffmpeg'
 import ffmpeg from 'fluent-ffmpeg'
+import { UNIDAD_PATH } from '../directories/paths.js'
 ffmpeg.setFfmpegPath(ffmpegPath.path)
 
 const __dirname = fileURLToPath(import.meta.url)
-export default async function getMiniature (nameDirectory, nameFile) {
+export default async function getMiniature(nameDirectory, nameFile) {
   try {
-    const routeOriginal = path.join(__dirname, `../../../unidad/${nameDirectory}`, `${nameFile}`)
-    const routeMiniature = path.join(__dirname, `../../../unidad/${nameDirectory}/gallery/`)
+    const routeOriginal = path.join(UNIDAD_PATH, `${nameDirectory}`, `${nameFile}`)
+    const routeMiniature = path.join(UNIDAD_PATH, `${nameDirectory}/gallery/`)
     const ext = nameFile.split('.').pop().toLowerCase()
 
     const typeDoc = {
@@ -25,8 +26,7 @@ export default async function getMiniature (nameDirectory, nameFile) {
       mkv: getMiniatureVideo,
       webM: getMiniatureVideo,
       flv: getMiniatureVideo,
-      wmv: getMiniatureVideo
-
+      wmv: getMiniatureVideo,
     }
 
     const handler = typeDoc[ext]
@@ -34,11 +34,11 @@ export default async function getMiniature (nameDirectory, nameFile) {
       await handler(nameFile, routeOriginal, routeMiniature)
     }
   } catch (error) {
-    console.log(error)
+    console.log(error, 'AQUIO')
   }
 }
 
-async function getMiniatureImages (nameFile, routeOriginal, routeMiniature) {
+async function getMiniatureImages(nameFile, routeOriginal, routeMiniature) {
   try {
     const miniaturePath = path.join(routeMiniature, `${nameFile.split('.')[0]}.png`)
     await sharp(routeOriginal)
@@ -51,17 +51,16 @@ async function getMiniatureImages (nameFile, routeOriginal, routeMiniature) {
   }
 }
 
-async function getMiniatureVideo (nameFile, routeOriginal, routeMiniature) {
+async function getMiniatureVideo(nameFile, routeOriginal, routeMiniature) {
   try {
     const nameMiniatura = nameFile.split('.')[0]
 
-    ffmpeg(routeOriginal)
-      .screenshots({
-        timestamps: [0.5],
-        filename: `${nameMiniatura}.png`,
-        folder: routeMiniature,
-        size: '260x168'
-      })
+    ffmpeg(routeOriginal).screenshots({
+      timestamps: [0.5],
+      filename: `${nameMiniatura}.png`,
+      folder: routeMiniature,
+      size: '260x168',
+    })
   } catch (error) {
     console.log(error)
   }

@@ -1,12 +1,13 @@
-import { console } from "node:inspector/promises";
-import { settings } from "../../config/env/varaibles.js";
-import getMiniature from "../../helpers/getMiniature.js";
-import { encryptPassword } from "../../helpers/handleBcrypt.js";
-import { httpError } from "../../helpers/handleError.js";
-import { createDirectory, createPhysicalDir } from "../../middleware/directories/CreateDirectories.js";
-import { deleteFile } from "../../middleware/directories/DeleteDirectory.js";
-import { deleteFiles } from "../../middleware/directories/DeleteFiles.js";
-import UserModel from "../../models /user.js";
+import { console } from 'node:inspector/promises'
+import { settings } from '../../config/env/varaibles.js'
+import getMiniature from '../../helpers/files/getMiniature.js'
+import { encryptPassword } from '../../helpers/handleBcrypt.js'
+import { httpError } from '../../helpers/handleError.js'
+import { createDirectoryStructure } from '../../middleware/directories/create-directories.js'
+import { deleteFile } from '../../middleware/directories/delete-directory.js'
+import { deleteFiles } from '../../middleware/directories/delete-files.js'
+import UserModel from '../../models /user.js'
+import { createPhysicalDir } from '../../helpers/directories/create-physical-directory.js'
 
 /**
  * This function get a user by id specified
@@ -15,25 +16,25 @@ import UserModel from "../../models /user.js";
  * @returns
  */
 export const getUser = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params
 
   try {
-    const userExist = await UserModel.findById({ _id: id });
+    const userExist = await UserModel.findById({ _id: id })
 
     if (!userExist || Object.keys(userExist).length === 0) {
-      res.status(404).json({ error: "id is malformed user not found " });
-      return;
+      res.status(404).json({ error: 'id is malformed user not found ' })
+      return
     }
     const user = {
       ...userExist._doc,
       avatar: `${settings.HOST}/api/files/avatars/${userExist.avatar}`,
-    };
+    }
 
-    res.status(200).json({ user });
+    res.status(200).json({ user })
   } catch (error) {
-    httpError(error, res);
+    httpError(error, res)
   }
-};
+}
 
 /**
  * This function creates a new user with a default avatar, encrypted password, and specified username,
@@ -48,15 +49,15 @@ export const getUser = async (req, res) => {
  * error message is returned with a status code of 500.
  */
 export const createUser = async (req, res, next) => {
-  const { userName, email, password } = req.body;
+  const { userName, email, password } = req.body
   try {
-    const avatar = "userDefault.png";
-    const passwordHash = await encryptPassword(password);
-    const directoryName = `Default${userName.trim().split(" ").join("")}`;
+    const avatar = 'userDefault.png'
+    const passwordHash = await encryptPassword(password)
+    const directoryName = `Default${userName.trim().split(' ').join('')}`
 
     const newUser = {
       avatar,
-      userName: userName.trim().split(" ").join(""),
+      userName: userName.trim().split(' ').join(''),
       password: passwordHash,
       email,
       directories: [
@@ -65,24 +66,24 @@ export const createUser = async (req, res, next) => {
           files: [],
         },
       ],
-    };
-
-    await createDirectory(directoryName);
-
-    const userCreated = await UserModel.create(newUser);
-
-    if (!userCreated) {
-      res.status(500).json({ error: "Could not create the user" });
-      return;
     }
 
-    res.status(201).json({ userCreated });
+    await createDirectoryStructure(directoryName)
 
-    return next();
+    const userCreated = await UserModel.create(newUser)
+
+    if (!userCreated) {
+      res.status(500).json({ error: 'Could not create the user' })
+      return
+    }
+
+    res.status(201).json({ userCreated })
+
+    return next()
   } catch (error) {
-    httpError(error, res);
+    httpError(error, res)
   }
-};
+}
 /**
  * This function updates a user's information, including their username, password, and avatar image.
  * @param {body, id}req - The request object represents the HTTP request that was sent by the client to the
@@ -95,116 +96,121 @@ export const createUser = async (req, res, next) => {
  */
 
 export const UpdateUser = async (req, res) => {
-  const { userName, password } = req.body;
-  const { id } = req.params;
+  const { userName, password } = req.body
+  const { id } = req.params
 
   try {
-    const user = await UserModel.findById(id);
+    const user = await UserModel.findById(id)
     if (!user) {
-      res.status(404).json({ error: "User not found" });
-      return;
+      res.status(404).json({ error: 'User not found' })
+      return
     }
-    let passwordHash = user.password;
+    let passwordHash = user.password
 
-    let avatar = user.avatar;
+    let avatar = user.avatar
 
     /** si se subio el archivo, accedemos a la primera pociosion del arreglo avatar y accedemos a la propiedad del nombre
      del archivo
      */
 
     if (req.file && req.file.filename) {
-      avatar = req.file.filename;
+      avatar = req.file.filename
     }
     /** si viene contraseñas la actualizamos y encryptamos */
     if (password) {
-      passwordHash = await encryptPassword(password);
+      passwordHash = await encryptPassword(password)
     }
 
     const userUpdate = await UserModel.findByIdAndUpdate(
       id,
       { userName, password: passwordHash, avatar },
-      { new: true },
-    );
+      { new: true }
+    )
 
     if (!userUpdate) {
-      res.status(500).json({ error: "no se pudo actualziar " });
-      return;
+      res.status(500).json({ error: 'no se pudo actualziar ' })
+      return
     }
 
-    res.status(200).json({ userUpdate });
+    res.status(200).json({ userUpdate })
   } catch (error) {
-    httpError(error, res);
+    httpError(error, res)
   }
-};
+}
 /**
- * This function creates a directory for a user and checks if the directory already exists.
- * @param req - req stands for request and it is an object that contains information about the HTTP
- * request that was made, such as the request headers, request parameters, request body, etc.
- * @param res - `res` is the response object that is used to send the HTTP response back to the client.
- * It contains methods like `status()` to set the HTTP status code, `json()` to send a JSON response,
- * and `send()` to send a plain text response.
- * @param next - `next` is a function that is called to pass control to the next middleware function.
- * It is typically used in Express.js to chain multiple middleware functions together.
- * @returns a JSON response with the created directory object if the directory was successfully
- * created, or an error message if there was an issue with the request or server. The `next()` function
- * is also being called, but it is not necessary since the function already returns a response.
+ * Creates a new directory for a user, both in the database and on the filesystem.
+ *
+ * This handler validates the directory name, verifies that the user exists,
+ * checks if the directory name is already registered, and then attempts to
+ * create the physical directory on disk. If the directory is created
+ * successfully, it updates the user's directory list using `$addToSet` to
+ * avoid duplicates.
+ *
+ * @param {object} req - Express request object. Uses `req.params.username`,
+ * `req.params.baseDir`, and `req.body.directoryName`.
+ * @param {object} res - Express response object used to send status codes and JSON data.
+ * @param {function} _next - Unused Express middleware callback.
+ *
+ * @returns {void} Sends a JSON response:
+ * - `400` if `directoryName` is missing.
+ * - `404` if the user does not exist.
+ * - `409` if a directory with the same name already exists for the user.
+ * - `500` if the physical directory cannot be created.
+ * - `201` with the updated directory list if the directory is created successfully.
  */
-export const createFolder = async (req, res, next) => {
-  const { username, dir } = req.params;
-  const { directoryName } = req.body;
+export const createFolder = async (req, res, _next) => {
+  const { username, baseDir } = req.params
 
+  const { directoryName } = req.body
 
-  if (!directoryName || directoryName.trim() === "") {
+  if (!directoryName || directoryName.trim() === '') {
     return res.status(400).json({ message: 'No directory name provided' })
   }
 
   try {
-    const user = await UserModel.findOne({ userName:username });
+    const existingUser = await UserModel.findOne({ userName: username })
 
-    if (!user) {
-      res.status(404).json({ error: "User not found" });
-      return;
+    if (!existingUser) {
+      res.status(404).json({ error: 'User not found' })
+      return
     }
 
-    // verificar Si el directorio existe
-    const directoryExists = user.directories.find(
-      (dir) => dir.directoryName === directoryName,
-    );
+    const directoryExists = existingUser.directories.find((dir) => dir.directoryName === directoryName)
+
     if (directoryExists) {
-      res
-        .status(409)
-        .json({
-          error:
-          "The directory could not be created, because there is already one with that name",
-        });
-      return;
+      res.status(409).json({
+        error: 'The directory could not be created, because there is already one with that name',
+      })
+      return
     }
 
-    const createdDirectory = await createPhysicalDir({dir,directoryName })
+    const createdDirectory = await createPhysicalDir({ baseDir, directoryName })
 
-    if (createdDirectory instanceof Error){
-      res.status(500).json({ error: "Could not create the directory" });
-      return;
+    if (createdDirectory instanceof Error) {
+      res.status(500).json({ error: 'Could not create the directory' })
+      return
     }
 
     /** usamos el metodo addToset para agregar al arreglo y aplanarlo */
     const updateUser = await UserModel.findOneAndUpdate(
-      user._id,
+      existingUser._id,
       {
         $addToSet: {
           directories: { directoryName },
         },
       },
-      { new: true },
-    );
+      { new: true }
+    )
 
-
-    res.status(201).json({ message: 'Directory created successfully', directories:updateUser.directories })
+    res.status(201).json({
+      message: 'Directory created successfully',
+      directories: updateUser.directories,
+    })
     return
   } catch (error) {
-    httpError(error, res);
+    httpError(error, res)
   }
-};
+}
 /**
  * This function updates a user's directories by adding new files to a specific directory.
  * @param {Object} req - The request object
@@ -217,23 +223,23 @@ export const createFolder = async (req, res, next) => {
  * @returns This function returns a JSON response with the updated user object if the update was
  * successful, or an error message if there was an error.
  */
-export const updateDirectories = async (req, res) => {
-  const { username, dir, folder  } = req.params;
-  console.log(dir)
+export const uploadFileToDirectory = async (req, res) => {
+  const { username, directory, folder } = req.params
 
   try {
-    const file = [];
-    const year = new Date().getFullYear();
-    const month = new Date().getMonth() + 1;
-    let day = new Date().getDate().toString();
+    const file = []
+    const year = new Date().getFullYear()
+    const month = new Date().getMonth() + 1
+    let day = new Date().getDate().toString()
 
     if (day.length === 1) {
-      day = `0${day}`;
+      day = `0${day}`
     }
 
-    const date = `${year}-${month}-${day}`.toString();
-    let space = 0;
+    const date = `${year}-${month}-${day}`.toString()
+    let space = 0
 
+    const uploadedFiles = []
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
     if (req.files && req.files.gallery) {
       console.log('entopr')
@@ -242,10 +248,9 @@ export const updateDirectories = async (req, res) => {
           nameFile: element.originalname,
           Date: date,
           size: element.size,
-        });
-        space += element.size;
-        getMiniature(dir, element.originalname);
-      });
+        })
+        space += element.size
+      })
     }
 
     const userFileUpdate = await UserModel.findOneAndUpdate(
@@ -253,36 +258,37 @@ export const updateDirectories = async (req, res) => {
       /** agregamos los archivos aplanados y le decimos que los guarde en la direccion del directorio que encontró */
       {
         $addToSet: {
-          "directories.$[dir].files": { $each: file },
+          'directories.$[dir].files': { $each: file },
         },
       },
       // le indicamos el directorio
       {
-        arrayFilters: [{ "dir.directoryName": folder }],
+        arrayFilters: [{ 'dir.directoryName': folder }],
         new: true,
-      },
-    );
+      }
+    )
 
     if (!userFileUpdate) {
-      return res.status(404).json({ error: "User or directory not found", userFileUpdate });
+      return res.status(404).json({ error: 'User or directory not found', userFileUpdate })
     }
 
-
-
-    userFileUpdate.space += space;
-    await userFileUpdate.save();
+    userFileUpdate.space += space
+    await userFileUpdate.save()
 
     if (!userFileUpdate) {
-      res.status(404).json({ error: "User not found" });
-      return;
+      res.status(404).json({ error: 'User not found' })
+      return
+    }
+    for (const fileName of uploadedFiles) {
+      await getMiniature(directory, fileName)
     }
 
-    res.status(200).json({ userFileUpdate });
+    res.status(200).json({ userFileUpdate })
   } catch (error) {
-    console.log(error, 'error');
-    httpError(error, res);
+    console.log(error, 'error')
+    httpError(error, res)
   }
-};
+}
 /**
  * This function delete a directory by the name directory specified
  * @param {Object} req - The request object
@@ -294,48 +300,42 @@ export const updateDirectories = async (req, res) => {
  * @returns This function returns a JSON response whit message directory deleted correctly
  */
 export const deleteDirectory = async (req, res, next) => {
-  const { username, dir } = req.params;
+  const { username, dir } = req.params
 
-  let size = 0;
+  let size = 0
 
   try {
-    const userExist = await UserModel.findOne({ username });
+    const userExist = await UserModel.findOne({ username })
 
     if (!userExist) {
-      res.status(404).json({ error: "User not found, id is malformed" });
-      return;
+      res.status(404).json({ error: 'User not found, id is malformed' })
+      return
     }
 
-    const directories = userExist.directories.find(
-      (dir) => dir.directoryName === dir,
-    );
+    const directories = userExist.directories.find((dir) => dir.directoryName === dir)
 
     if (!directories) {
-      res.status(404).json({ error: "Directory not found, id is malformed" });
-      return;
+      res.status(404).json({ error: 'Directory not found, id is malformed' })
+      return
     }
 
-    size = await deleteFile(req, res);
-    userExist.space -= Number(size);
+    size = await deleteFile(req, res)
+    userExist.space -= Number(size)
 
     if (userExist.space < 0) {
-      userExist.space = 0;
+      userExist.space = 0
     }
 
-    await UserModel.updateOne(
-      { username },
-      { $pull: { directories: { directoryName: `${dir}` } } },
-      { new: true },
-    );
+    await UserModel.updateOne({ username }, { $pull: { directories: { directoryName: `${dir}` } } }, { new: true })
 
-    const user = await UserModel.findOne({ username });
-    res.status(200).json({ user });
+    const user = await UserModel.findOne({ username })
+    res.status(200).json({ user })
 
-    return next();
+    return next()
   } catch (error) {
-    httpError(error, res);
+    httpError(error, res)
   }
-};
+}
 
 /**
  * This function deletes files from a user's directory based on the provided file names.
@@ -356,56 +356,52 @@ export const deleteDirectory = async (req, res, next) => {
  * next middleware function in the stack.
  */
 export const deleteFileUser = async (req, res, next) => {
-  const { username, dir } = req.params;
+  const { username, dir } = req.params
 
-  const { files } = req.body;
+  const { files } = req.body
   try {
-    let totalSize = 0;
+    let totalSize = 0
 
     if (!Array.isArray(files) || files.length === 0) {
-      res.status(400).json({ error: "files is not array" });
-      return;
+      res.status(400).json({ error: 'files is not array' })
+      return
     }
 
-    const user = await UserModel.findOne({ username });
+    const user = await UserModel.findOne({ username })
 
     if (!user) {
-      res.status(404).json({ error: "User not found, id is malformed" });
-      return;
+      res.status(404).json({ error: 'User not found, id is malformed' })
+      return
     }
 
-    const foundDirectory = user.directories.find(
-      (dir) => dir.directoryName === dir,
-    );
+    const foundDirectory = user.directories.find((dir) => dir.directoryName === dir)
     if (!foundDirectory) {
-      res.status(404).json({ error: "Directory not found, id is malformed" });
-      return;
+      res.status(404).json({ error: 'Directory not found, id is malformed' })
+      return
     }
-    const filesToDelete = foundDirectory.files.filter(
-      (file) => !files.includes(file.nameFile),
-    );
+    const filesToDelete = foundDirectory.files.filter((file) => !files.includes(file.nameFile))
 
-    const size = await deleteFiles(req, res);
+    const size = await deleteFiles(req, res)
 
     if (size !== Number(size)) {
-      res.status(404).json({ error: "files not found" });
-      return;
+      res.status(404).json({ error: 'files not found' })
+      return
     }
-    totalSize = Number(user.space) - Number(size);
+    totalSize = Number(user.space) - Number(size)
 
-    user.space = totalSize;
+    user.space = totalSize
 
-    directory.files = filesToDelete;
+    directory.files = filesToDelete
 
-    await user.save();
-    const userUpdated = await UserModel.findOne({ username });
+    await user.save()
+    const userUpdated = await UserModel.findOne({ username })
 
-    res.status(200).json({ userUpdated });
+    res.status(200).json({ userUpdated })
   } catch (error) {
-    console.log(error);
-    httpError(error, res);
+    console.log(error)
+    httpError(error, res)
   }
-};
+}
 
 /**
  * this function delete a user by username specified
@@ -414,49 +410,45 @@ export const deleteFileUser = async (req, res, next) => {
  * @returns This function returns a JSON whit user deleted
  */
 export const deleteUser = async (req, res) => {
-  const { username } = req.params;
+  const { username } = req.params
 
   try {
-    const userDelete = await UserModel.findOneAndDelete({ username });
+    const userDelete = await UserModel.findOneAndDelete({ username })
 
     if (!userDelete) {
-      res.status(500).json({ error: "could not delete the user " });
-      return;
+      res.status(500).json({ error: 'could not delete the user ' })
+      return
     }
-    res.status(200).json("user deleted succefull");
+    res.status(200).json('user deleted succefull')
   } catch (error) {
-    httpError(error, res);
+    httpError(error, res)
   }
-};
+}
 
 export const updateMember = async (req, res) => {
-  const { username } = req.params;
+  const { username } = req.params
 
   try {
-    let premium;
+    let premium
 
-    const user = await UserModel.findOne({ username });
+    const user = await UserModel.findOne({ username })
 
     if (!user) {
-      res.status(404).json({ error: "Invalid id" });
-      return;
+      res.status(404).json({ error: 'Invalid id' })
+      return
     }
     // eslint-disable-next-line prefer-const
-    premium = !user.premium;
+    premium = !user.premium
 
-    const userUpdate = await UserModel.findOneAndUpdate(
-      { username },
-      { premium },
-      { new: true },
-    );
+    const userUpdate = await UserModel.findOneAndUpdate({ username }, { premium }, { new: true })
 
     if (!userUpdate) {
-      res.status(500).json({ error: "could not update the membership" });
-      return;
+      res.status(500).json({ error: 'could not update the membership' })
+      return
     }
 
-    res.status(200).json({ userUpdate });
+    res.status(200).json({ userUpdate })
   } catch (error) {
-    httpError(error, res);
+    httpError(error, res)
   }
-};
+}

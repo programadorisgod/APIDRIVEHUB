@@ -7,10 +7,8 @@ COPY package-lock.json .
 
 RUN  npm install
 
-COPY . /DriveHub 
+COPY . /DriveHub
 
 EXPOSE 4000
 
 CMD npm start
-
-

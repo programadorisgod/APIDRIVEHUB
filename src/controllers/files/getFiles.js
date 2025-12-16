@@ -1,8 +1,8 @@
 import path from 'path'
-import verifyFileExist from '../../helpers/verifyFile.js'
+import verifyFileExist from '../../helpers/files/verifyFile.js'
 import { httpError } from '../../helpers/handleError.js'
 import { descryptIdentifier } from '../../helpers/encrypt.js'
-import verifyFileExistLink from '../../helpers/findFile.js'
+import verifyFileExistLink from '../../helpers/files/findFile.js'
 import fs from 'fs'
 import UserModel from '../../models /user.js'
 import Throttle from 'throttle'
@@ -19,11 +19,11 @@ import Throttle from 'throttle'
  * error response with a JSON object containing an error message. If there is any other error, it sends
  * a 500 error response with a JSON object containing an error message.
  */
-export default async function getFiles (req, res) {
+export default async function getFiles(req, res) {
   const { filename, dir, username } = req.params
   try {
     const route = path.join(process.cwd(), `/unidad/${dir}`, filename)
-    const user = await UserModel.findOne({ userName:username })
+    const user = await UserModel.findOne({ userName: username })
 
     if (!user) {
       res.status(404).json({ error: 'user not found' })
@@ -43,19 +43,19 @@ export default async function getFiles (req, res) {
     res.header('Content-Length', fileSize)
 
     if (user.premium) {
-      const throttle = new Throttle(1024 * 1024 * 250)// 250MB/s
+      const throttle = new Throttle(1024 * 1024 * 250) // 250MB/s
       fileStream.pipe(throttle).pipe(res)
       return
     }
 
-    const throttle = new Throttle(1024 * 1024 * 50)// 10MB/s
+    const throttle = new Throttle(1024 * 1024 * 50) // 10MB/s
     fileStream.pipe(throttle).pipe(res, { end: true })
   } catch (error) {
     httpError(error, res)
   }
 }
 
-export async function getMiniatures (req, res) {
+export async function getMiniatures(req, res) {
   const { filename, dir } = req.params
   try {
     const route = path.join(process.cwd(), `/unidad/${dir}/gallery`, filename)
@@ -70,7 +70,7 @@ export async function getMiniatures (req, res) {
   }
 }
 
-export async function getFilebyLink (req, res) {
+export async function getFilebyLink(req, res) {
   const { file } = req.query
   const { dir } = req.query
   const decodedFilename = descryptIdentifier(file)

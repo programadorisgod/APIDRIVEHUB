@@ -1,27 +1,26 @@
 import path from 'path'
-import { fileURLToPath } from 'url'
-import verifyFileExist from '../../helpers/verifyFile.js'
+import verifyFileExist from '../../helpers/files/verifyFile.js'
 import { httpError } from '../../helpers/handleError.js'
-
-const __dirname = fileURLToPath(import.meta.url)
+import { UPLOADS_PATH } from '../../helpers/directories/paths.js'
 
 /**
- * This function retrieves an uploaded file and sends it as a response if it exists, otherwise it
- * returns a 404 error.
- * @param req - `req` is an object that represents the HTTP request made by the client to the server.
- * It contains information about the request such as the request method, headers, URL, and parameters.
- * In this specific function, `req` is used to extract the `fileName` parameter from the URL path.
- * @param res - `res` is an object representing the HTTP response that an Express.js route sends when
- * it is accessed. It contains methods and properties that allow the server to send data back to the
- * client, such as `status`, `json`, and `sendFile`. In this specific code snippet, `res`
- * @returns The function is not returning anything explicitly, but it is sending a file as a response
- * using `res.sendFile(route)`.
+ * Retrieves a stored avatar file and sends it in the HTTP response.
+ *
+ * Extracts the `filename` parameter from the request and resolves its absolute
+ * path inside the uploads directory. If the file does not exist, responds with
+ * HTTP 404. Otherwise, sends the file to the client. Any unexpected errors are
+ * handled by the `httpError` helper.
+ *
+ * @param {import('express').Request} req - HTTP request object containing `params.filename`.
+ * @param {import('express').Response} res - HTTP response used to return the file or an error.
+ * @returns {void}
  */
-export default function getAvatars (req, res) {
+
+export default function getAvatars(req, res) {
   const { filename } = req.params
 
   try {
-    const route = path.join(__dirname, '../../../../uploads/', filename)
+    const route = path.join(UPLOADS_PATH, filename)
 
     if (!verifyFileExist(route)) {
       res.status(404).json({ error: 'file not found' })
