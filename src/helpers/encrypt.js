@@ -1,5 +1,5 @@
 import crypto, { createDecipheriv } from 'node:crypto'
-import GenerateQR from './qr/generateQR.js'
+import { GenerateQR } from './qr/generateQR.js'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { settings } from '../config/env/varaibles.js'
