@@ -1,4 +1,4 @@
-import z from "zod";
+import z from 'zod'
 
 const enviromentVariables = z.object({
   CONEXION_STRING_DATABASE: z
@@ -6,29 +6,28 @@ const enviromentVariables = z.object({
     .trim()
     .min(30)
     .default(
-      "mongodb+srv://myDatabaseUser:D1fficultP%40ssw0rd@cluster0.example.mongodb.net/?retryWrites=true&w=majority",
+      'mongodb+srv://myDatabaseUser:D1fficultP%40ssw0rd@cluster0.example.mongodb.net/?retryWrites=true&w=majority'
     ),
   CONEXION_STRING_DATABASE_DEVELOPMENT: z
     .string()
     .trim()
     .min(30)
     .default(
-      "mongodb+srv://myDatabaseUser:D1fficultP%40ssw0rd@cluster0.example.mongodb.net/?retryWrites=true&w=majority",
+      'mongodb+srv://myDatabaseUser:D1fficultP%40ssw0rd@cluster0.example.mongodb.net/?retryWrites=true&w=majority'
     ),
   SECRET_KEY: z.string().trim().min(10),
   SECRET_HASH: z.string().trim().min(10),
   PRIVATE_EMAIL: z.email().nonempty(),
   PRIVATE_PASSWORD: z.string().min(12).max(16),
-  NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default(["development"]),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default(['development']),
   HOST: z.string().nonempty(),
   PORT: z.string().min(4).max(6),
-});
+  KEY: z.string().nonempty(),
+})
 
-const { success, error, data } = enviromentVariables.safeParse(process.env);
+const { success, error, data } = enviromentVariables.safeParse(process.env)
 
-if (!success) throw new Error("Missing enviroment variables", { cause: error });
+if (!success) throw new Error('Missing enviroment variables', { cause: error })
 
 const {
   CONEXION_STRING_DATABASE,
@@ -40,12 +39,10 @@ const {
   NODE_ENV,
   HOST,
   PORT,
-} = data;
+  KEY,
+} = data
 
-const DATABASE_URL =
-  NODE_ENV === "production"
-    ? CONEXION_STRING_DATABASE
-    : CONEXION_STRING_DATABASE_DEVELOPMENT;
+const DATABASE_URL = NODE_ENV === 'production' ? CONEXION_STRING_DATABASE : CONEXION_STRING_DATABASE_DEVELOPMENT
 
 export const settings = Object.freeze({
   SECRET_KEY,
@@ -56,4 +53,5 @@ export const settings = Object.freeze({
   DATABASE_URL,
   HOST,
   PORT,
-});
+  KEY,
+})
