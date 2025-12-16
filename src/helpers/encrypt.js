@@ -1,51 +1,45 @@
 import crypto, { createDecipheriv } from 'node:crypto'
-import { GenerateQR } from './qr/generateQR.js'
-import fs from 'node:fs/promises'
-import path from 'node:path'
+
 import { settings } from '../config/env/varaibles.js'
 
 const algoritm = 'aes-256-cbc'
-const key = Buffer.from('0a1f4a9c3b0f6b9c5d2a8c3d6e8f7f1c4a3b2c1d5e4f6d7c8a9b0c1d2e3f4a5b', 'hex')
-const iv = Buffer.from('0f1e2d3c4b5a69788796a5b4c3d2e1f0', 'hex')
 
-const encryptIdentifier = async (req, res) => {
-  try {
-    const { identifier } = req.query
-    const { dir } = req.query
+function encrypt({ text }) {
+  const iv = crypto.randomBytes(16)
 
-    const cipher = crypto.createCipheriv(algoritm, key, iv)
-    let encrypted = cipher.update(identifier, 'utf8', 'hex')
-    encrypted += cipher.final('hex')
+  const key = Buffer.from(settings.KEY, 'hex')
 
-    const hash = createHash(encrypted)
-    const link = `${settings.HOST}/api/files/open-file?file=${encodeURIComponent(encrypted)}&dir=${dir.toString().trim()}&signature=${encodeURIComponent(hash)}`
-    const idQR = await GenerateQR(link)
-    const route = path.join(process.cwd(), '/QR', `${idQR}`)
+  const cipher = crypto.createCipheriv(algoritm, key, iv)
 
-    const qrImage = await fs.readFile(route, { encoding: 'base64' })
+  let encrypted = cipher.update(text, 'utf8', 'hex')
 
-    const response = {
-      link,
-      QR: qrImage,
-    }
-    res.status(200).json({ response })
-  } catch (error) {
-    res.status(500).json({ msg: 'Internal server error' })
-  }
+  encrypted += cipher.final('hex')
+
+  const result = iv.toString('hex') + ':' + encrypted
+
+  return result
 }
 
-export function createHash(identifier) {
+function createHash(identifier) {
   const hash = crypto.createHash('sha256', settings.SECRET_HASH)
   hash.update(identifier)
   return hash.digest('hex')
 }
 
-function descryptIdentifier(identifier) {
+function descryptIdentifier(encryptedIdentifier) {
+  const [ivHex, encryptedText] = encryptedIdentifier.split(':')
+
+  const iv = Buffer.from(ivHex, 'hex')
+
+  const key = Buffer.from(settings.KEY, 'hex')
+
   const decipher = createDecipheriv(algoritm, key, iv)
 
-  let descrypted = decipher.update(identifier, 'hex', 'utf8')
+  let descrypted = decipher.update(encryptedText, 'hex', 'utf8')
+
   descrypted += decipher.final('utf8')
+
   return descrypted.toString()
 }
 
-export { encryptIdentifier, descryptIdentifier }
+export { encrypt, descryptIdentifier, createHash }
