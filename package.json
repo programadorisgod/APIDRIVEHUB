@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development node --watch --env-file=.env index.js",
-    "start": " NODE_ENV=production node dist/bundle.js",
+    "start": "cross-env NODE_ENV=production node --watch --env-file=.env index.js",
     "test:watch": "npm run test --watch",
     "build": "bun build index.js --target=node --outdir=dist --splitting",
     "testPerformance": "autocannon localhost:4000"
