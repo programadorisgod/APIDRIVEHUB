@@ -1,6 +1,5 @@
-import { console } from 'node:inspector/promises'
 import { settings } from '../../config/env/varaibles.js'
-import getMiniature from '../../helpers/files/getMiniature.js'
+import { getMiniature } from '../../helpers/files/getMiniature.js'
 import { encryptPassword } from '../../helpers/handleBcrypt.js'
 import { httpError } from '../../helpers/handleError.js'
 import { createDirectoryStructure } from '../../middleware/directories/create-directories.js'
@@ -227,7 +226,7 @@ export const uploadFileToDirectory = async (req, res) => {
   const { username, directory, folder } = req.params
 
   try {
-    const file = []
+    // const file = []
     const year = new Date().getFullYear()
     const month = new Date().getMonth() + 1
     let day = new Date().getDate().toString()
@@ -240,13 +239,13 @@ export const uploadFileToDirectory = async (req, res) => {
     let space = 0
 
     const uploadedFiles = []
+    console.log(req.files, 'files')
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
     if (req.files && req.files.gallery) {
-      console.log('entopr')
       req.files.gallery.forEach((element) => {
-        file.push({
-          nameFile: element.originalname,
-          Date: date,
+        uploadedFiles.push({
+          fileName: element.originalname,
+          date: date,
           size: element.size,
         })
         space += element.size
@@ -258,7 +257,7 @@ export const uploadFileToDirectory = async (req, res) => {
       /** agregamos los archivos aplanados y le decimos que los guarde en la direccion del directorio que encontró */
       {
         $addToSet: {
-          'directories.$[dir].files': { $each: file },
+          'directories.$[dir].files': { $each: uploadedFiles },
         },
       },
       // le indicamos el directorio
@@ -279,13 +278,14 @@ export const uploadFileToDirectory = async (req, res) => {
       res.status(404).json({ error: 'User not found' })
       return
     }
+    console.log('UPLOADFILES:', uploadedFiles)
     for (const fileName of uploadedFiles) {
-      await getMiniature(directory, fileName)
+      console.log('FILES', fileName)
+      await getMiniature(directory, folder, fileName)
     }
 
     res.status(200).json({ userFileUpdate })
   } catch (error) {
-    console.log(error, 'error')
     httpError(error, res)
   }
 }
@@ -398,7 +398,6 @@ export const deleteFileUser = async (req, res, next) => {
 
     res.status(200).json({ userUpdated })
   } catch (error) {
-    console.log(error)
     httpError(error, res)
   }
 }
