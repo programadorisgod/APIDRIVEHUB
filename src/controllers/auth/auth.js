@@ -39,7 +39,6 @@ export const login = async (req, res) => {
 
     res.status(200).json({ user: dto, token })
   } catch (error) {
-    console.log(error)
     httpError(error, res)
   }
 }
