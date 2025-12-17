@@ -6,6 +6,7 @@ import verifyFileExistLink from '../../helpers/files/findFile.js'
 import fs from 'fs'
 import UserModel from '../../models /user.js'
 import Throttle from 'throttle'
+import { UNIDAD_PATH } from '../../helpers/directories/paths.js'
 /**
  * This function retrieves a file from a specified directory and sends it as a response, while handling
  * errors.
@@ -58,13 +59,13 @@ export default async function getFiles(req, res) {
 export async function getMiniatures(req, res) {
   const { filename, dir } = req.params
   try {
-    const route = path.join(process.cwd(), `/unidad/${dir}/gallery`, filename)
-    if (!verifyFileExist(route)) {
+    const filePath = path.join(UNIDAD_PATH, `/${dir}/gallery`, filename)
+    if (!verifyFileExist(filePath)) {
       res.status(404).json({ error: 'file not found' })
       return
     }
 
-    res.sendFile(route)
+    res.sendFile(filePath)
   } catch (error) {
     httpError(error, res)
   }

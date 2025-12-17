@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { GenerateQR } from './qr/generateQR.js'
-import { createHash, encrypt } from './encrypt.js'
-import { settings } from '../config/env/varaibles.js'
+import { GenerateQR } from '../qr/generateQR.js'
+import { createHash, encrypt } from '../encrypt.js'
+import { settings } from '../../config/env/varaibles.js'
 
 export const generateFileAccessLink = async ({ fileIdentifier, directory }) => {
   try {

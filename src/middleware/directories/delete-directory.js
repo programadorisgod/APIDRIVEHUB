@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { httpError } from '../../helpers/handleError.js'
-import getDirectorySize from '../../helpers/calculateSize.js'
+import getDirectorySize from '../../helpers/directories/calculateSize.js'
 import { rm } from 'node:fs/promises'
 import { UNIDAD_PATH } from '../../helpers/directories/paths.js'
 

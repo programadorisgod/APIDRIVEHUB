@@ -1,5 +1,5 @@
 import { httpError } from '../../helpers/handleError.js'
-import { generateFileAccessLink } from '../../helpers/secureFileAccess.js'
+import { generateFileAccessLink } from '../../helpers/files/secureFileAccess.js'
 
 export async function requestFileAccess(req, res, next) {
   const { fileIdentifier } = req.query

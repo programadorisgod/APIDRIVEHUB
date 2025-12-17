@@ -1,5 +1,5 @@
 import fs from 'fs'
-export default function verifyFileExist (path) {
+export default function verifyFileExist(path) {
   try {
     fs.accessSync(path)
     return true
