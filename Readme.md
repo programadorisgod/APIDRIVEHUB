@@ -16,6 +16,9 @@ La API DriveHub ofrece las siguientes funcionalidades principales:
 
 ## Instalación
 
+
+
+
 Para comenzar a utilizar la API DriveHub, sigue los siguientes pasos:
 
 1. Clona el repositorio del proyecto desde GitHub:
@@ -30,7 +33,26 @@ git clone https://github.com/tu-usuario/APIDRIVEHUB.git
 cd APIDRIVEHUB
 ```
 
-3. Instala las dependencias necesarias utilizando npm:
+3. Usando Docker
+
+Para construir y ejecutar la API DriveHub con Docker, sigue estos pasos:
+
+1. Construye la imagen de Docker sin usar caché:
+
+```bash
+docker build --no-cache -t apidrivehub:0.0.0 .
+```
+
+2. Ejecuta el contenedor con las variables de entorno definidas en un archivo `.env` y mapea el puerto 4000:
+
+```bash
+docker run \
+  --env-file .env \
+  -p 4000:4000 \
+  apidrivehub:0.0.0
+```
+
+4. Instala las dependencias necesarias utilizando npm:
 
 ```bash
 npm install
