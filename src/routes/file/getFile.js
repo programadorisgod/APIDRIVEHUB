@@ -15,6 +15,6 @@ routerFile.get(`${PREFIX}/unidad/:dir/:filename`, getMiniatures)
 routerFile.get(`${PREFIX}/avatars/:filename`, getAvatars)
 routerFile.get(`${PREFIX}/getlink`, checkAuth, requestFileAccess)
 routerFile.get(`${PREFIX}/open-file`, getFilebyLink)
-routerFile.get(`${PREFIX}/convert/:dir/:filename/:ext`, checkAuth, convertFile)
+routerFile.get(`${PREFIX}/convert/:dir/:folder?/:filename/:ext`, checkAuth, convertFile)
 
 export default routerFile

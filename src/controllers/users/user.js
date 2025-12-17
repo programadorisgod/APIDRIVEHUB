@@ -226,7 +226,6 @@ export const uploadFileToDirectory = async (req, res) => {
   const { username, directory, folder } = req.params
 
   try {
-    // const file = []
     const year = new Date().getFullYear()
     const month = new Date().getMonth() + 1
     let day = new Date().getDate().toString()
@@ -239,7 +238,6 @@ export const uploadFileToDirectory = async (req, res) => {
     let space = 0
 
     const uploadedFiles = []
-    console.log(req.files, 'files')
     /* si se cargaron archivos, entonces lo que hacemos es recorrer el array y agregar los nuevo elementos */
     if (req.files && req.files.gallery) {
       req.files.gallery.forEach((element) => {
@@ -278,9 +276,7 @@ export const uploadFileToDirectory = async (req, res) => {
       res.status(404).json({ error: 'User not found' })
       return
     }
-    console.log('UPLOADFILES:', uploadedFiles)
     for (const fileName of uploadedFiles) {
-      console.log('FILES', fileName)
       await getMiniature(directory, folder, fileName)
     }
 

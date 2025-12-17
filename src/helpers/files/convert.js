@@ -2,20 +2,22 @@ import path from 'node:path'
 import libre from 'libreoffice-convert'
 import util from 'node:util'
 import fs from 'node:fs/promises'
-import { CONVERTED_ṔATH, UPLOADS_PATH } from '../directories/paths.js'
+import { CONVERTED_ṔATH, UNIDAD_PATH } from '../directories/paths.js'
 
 const libreConvertAsync = util.promisify(libre.convert)
 export const convertFile = async (req, res) => {
-  const { directory, filename, ext } = req.params
+  const { dir, folder, filename, ext } = req.params
 
   try {
     const baseName = filename.split('.')[0]
 
-    const route = path.join(UPLOADS_PATH, `${directory}`, filename)
+    const filePath = folder
+      ? path.join(UNIDAD_PATH, `${dir}/${folder}`, filename)
+      : path.join(UNIDAD_PATH, `${dir}`, filename)
 
     const convertedFilePath = path.join(CONVERTED_ṔATH, `${baseName}.${ext}`)
 
-    const docx = await fs.readFile(route)
+    const docx = await fs.readFile(filePath)
 
     const pdfBuf = await libreConvertAsync(docx, ext, undefined)
 

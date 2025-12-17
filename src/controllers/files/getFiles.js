@@ -23,7 +23,7 @@ import { UNIDAD_PATH } from '../../helpers/directories/paths.js'
 export default async function getFiles(req, res) {
   const { filename, dir, username } = req.params
   try {
-    const route = path.join(process.cwd(), `/unidad/${dir}`, filename)
+    const filePath = path.join(UNIDAD_PATH, `/${dir}`, filename)
     const user = await UserModel.findOne({ userName: username })
 
     if (!user) {
@@ -31,13 +31,13 @@ export default async function getFiles(req, res) {
       return
     }
 
-    if (!verifyFileExist(route)) {
+    if (!verifyFileExist(filePath)) {
       res.status(404).json({ error: 'file not found' })
       return
     }
 
-    const fileStream = fs.createReadStream(route)
-    const stat = fs.statSync(route)
+    const fileStream = fs.createReadStream(filePath)
+    const stat = fs.statSync(filePath)
     const fileSize = stat.size
 
     res.setHeader('Content-Type', 'application/octet-stream')
