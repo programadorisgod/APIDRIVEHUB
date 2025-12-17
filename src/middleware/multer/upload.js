@@ -55,8 +55,6 @@ const upload = multer({ storage, fileFilter: checkFileType }).fields([{ name: 'g
 
 export const uploadFile = (req, res, next) => {
   upload(req, res, (error) => {
-    console.log('FILES RECIBIDOS:', req.files)
-
     if (error) {
       console.log('erro')
       res.status(400).json({ error: error.message })
