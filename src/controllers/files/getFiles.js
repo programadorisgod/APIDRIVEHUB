@@ -74,8 +74,6 @@ export async function getFilebyLink(req, res) {
   const { file } = req.query
   const { dir } = req.query
   const decodedFilename = descryptIdentifier(file)
-  console.log(dir)
-  console.log(decodedFilename, ' decoded filename')
   try {
     const existingFile = await verifyFileExistLink(decodedFilename, dir)
     if (!existingFile) {

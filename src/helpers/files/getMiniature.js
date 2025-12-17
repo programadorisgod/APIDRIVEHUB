@@ -1,17 +1,18 @@
 import sharp from 'sharp'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import ffmpegPath from '@ffmpeg-installer/ffmpeg'
 import ffmpeg from 'fluent-ffmpeg'
 import { UNIDAD_PATH } from '../directories/paths.js'
 ffmpeg.setFfmpegPath(ffmpegPath.path)
 
-const __dirname = fileURLToPath(import.meta.url)
-export default async function getMiniature(nameDirectory, nameFile) {
+export async function getMiniature(directoryName, folder, file) {
+  const fileName = file.fileName
   try {
-    const routeOriginal = path.join(UNIDAD_PATH, `${nameDirectory}`, `${nameFile}`)
-    const routeMiniature = path.join(UNIDAD_PATH, `${nameDirectory}/gallery/`)
-    const ext = nameFile.split('.').pop().toLowerCase()
+    const originalFilePath = folder
+      ? path.join(UNIDAD_PATH, `${directoryName}/${folder}`, `${fileName}`)
+      : path.join(UNIDAD_PATH, `${directoryName}`, `${fileName}`)
+    const miniatureFilePath = path.join(UNIDAD_PATH, `${directoryName}/gallery/`)
+    const ext = fileName.split('.').pop().toLowerCase()
 
     const typeDoc = {
       jpeg: getMiniatureImages,
@@ -31,34 +32,35 @@ export default async function getMiniature(nameDirectory, nameFile) {
 
     const handler = typeDoc[ext]
     if (typeof handler === 'function') {
-      await handler(nameFile, routeOriginal, routeMiniature)
+      await handler(fileName, originalFilePath, miniatureFilePath)
     }
   } catch (error) {
-    console.log(error, 'AQUIO')
+    throw error
   }
 }
 
-async function getMiniatureImages(nameFile, routeOriginal, routeMiniature) {
-  try {
-    const miniaturePath = path.join(routeMiniature, `${nameFile.split('.')[0]}.png`)
-    await sharp(routeOriginal)
+async function getMiniatureImages(fileName, originalFilePath, miniatureFilePath) {
+  return new Promise((resolve, reject) => {
+    const miniaturePath = path.join(miniatureFilePath, `${fileName.split('.')[0]}.png`)
+    sharp(originalFilePath)
       .resize(260, 168)
       .toFile(miniaturePath, (err) => {
-        if (err) throw err
+        if (err) {
+          console.log(err)
+          reject(err)
+        }
+        resolve(miniaturePath)
       })
-  } catch (error) {
-    console.log(error)
-  }
+  })
 }
 
-async function getMiniatureVideo(nameFile, routeOriginal, routeMiniature) {
+async function getMiniatureVideo(fileName, originalFilePath, miniatureFilePath) {
   try {
-    const nameMiniatura = nameFile.split('.')[0]
-
-    ffmpeg(routeOriginal).screenshots({
+    const nameMiniatura = fileName.split('.')[0]
+    ffmpeg(originalFilePath).screenshots({
       timestamps: [0.5],
       filename: `${nameMiniatura}.png`,
-      folder: routeMiniature,
+      folder: miniatureFilePath,
       size: '260x168',
     })
   } catch (error) {
