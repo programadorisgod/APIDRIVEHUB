@@ -17,7 +17,7 @@ import UserModel from '../../models /user.js'
  * credentials are valid. If the credentials are invalid, it returns a JSON response with an error
  * message. If there is an internal server error, it returns a JSON response with an error message.
  */
-export const Login = async (req, res) => {
+export const login = async (req, res) => {
   const { password, email } = req.body
 
   try {
@@ -38,7 +38,6 @@ export const Login = async (req, res) => {
     const dto = new UserDto(existingUser)
 
     res.status(200).json({ user: dto, token })
-
   } catch (error) {
     console.log(error)
     httpError(error, res)
