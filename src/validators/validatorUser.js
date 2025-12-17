@@ -17,7 +17,7 @@ import { verifyEmail, verifyPassword, verifyUserName } from '../helpers/handleVa
  * response with an error message and does not call `next()`. If an error occurs during the execution
  * of the function
  */
-export const ValidateData = async (req, res, next) => {
+export const validateData = async (req, res, next) => {
   try {
     if (Object.keys(req.body).length !== 0) {
       const { password, userName, email } = req.body

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import {
-  UpdateUser,
+  updateUser,
   createFolder,
   createUser,
   deleteDirectory,
@@ -10,7 +10,7 @@ import {
   uploadFileToDirectory,
   updateMember,
 } from '../../controllers/users/user.js'
-import { ValidateData } from '../../validators/validatorUser.js'
+import {  validateData } from '../../validators/validatorUser.js'
 import { checkAuth } from '../../middleware/auth/auth.js'
 import { uploadFile } from '../../middleware/multer/upload.js'
 import { uploadAvatar } from '../../middleware/multer/upload-avatar.js'
@@ -22,9 +22,9 @@ const path = '/api/users'
 
 routerUser.get(`${path}/:id`, checkAuth, getUser)
 
-routerUser.post(`${path}/`, ValidateData, createUser)
+routerUser.post(`${path}/`, validateData, createUser)
 
-routerUser.put(`${path}/:id`, checkAuth, ValidateData, uploadAvatar, UpdateUser)
+routerUser.put(`${path}/:id`, checkAuth, validateData, uploadAvatar, updateUser)
 
 routerUser.post(`${path}/:username/directories/:baseDir`, checkAuth, createFolder)
 

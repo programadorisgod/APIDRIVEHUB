@@ -95,7 +95,7 @@ export const createUser = async (req, res, next) => {
  * response with an error message if there was an error during the update process.
  */
 
-export const UpdateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
   const { userName, password } = req.body
   const { id } = req.params
 
